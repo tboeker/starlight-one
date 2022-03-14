@@ -1,0 +1,98 @@
+name: tbrocket1
+
+extensions:
+  - name: dapr
+    enable-profiling: true
+      #    services:
+      #      rocket-query-api:
+      #        enabled: false    
+      #      rocket-command-api:
+      #        enabled: false  
+  #- name: zipkin
+  - name: seq
+    logPath: ./.logs
+
+services:
+  - name: swagger
+    project: src/Framework/src/StartlightOne.Swagger/StartlightOne.Swagger.csproj
+    bindings:
+      - protocol: http
+  - name: health
+    project: src/Framework/src/StartlightOne.Health/StartlightOne.Health.csproj
+    bindings:
+      - protocol: http
+
+  # - name: rockets-query-api
+  #   project: src/Rockets/src/Rockets.Query.Api/Rockets.Query.Api.csproj
+  #   bindings:
+  #     - protocol: http
+
+  # - name: rockets-query-services
+  #   project: src/Rockets/src/Rockets.Query.Services/Rockets.Query.Services.csproj
+  #   bindings:
+  #     - protocol: http
+
+  # - name: rockets-command-api
+  #   project: src/Rockets/src/Rockets.Command.Api/Rockets.Command.Api.csproj
+  #   bindings:
+  #     - protocol: http
+
+  # - name: rockets-command-service
+  #   project: src/Rockets/src/Rockets.Command.Services/Rockets.Command.Services.csproj
+  #   bindings:
+  #     - protocol: http
+    
+    
+    #
+    #
+    #- name: dapr-placement
+    #  image: daprio/dapr
+    #  bindings:
+    #    - port: 50006
+    
+    #- name: redis
+    #  image: redis
+    #  bindings:
+    #    - port: 6379      
+    
+    #- name: redis-cli
+    #  image: redis
+    #  args: "redis-cli -h redis MONITOR"
+
+  - name: mongodb
+    image: mongo
+    bindings:
+      - port: 27017
+    env:
+      - name: MONGO_INITDB_ROOT_USERNAME
+        value: mongoadmin
+      - name: MONGO_INITDB_ROOT_PASSWORD
+        value: secret
+
+#      
+#- name: esdb
+#  image: eventstore/eventstore:latest
+#  bindings:
+#    - port: 2113
+#      containerPort: 2113
+#      protocol: http
+#    - port: 1113
+#      containerPort: 1113
+#      protocol: http
+#    env:
+#      - name: EVENTSTORE_INSECURE
+#        value: true
+#      - name: EVENTSTORE_CLUSTER_SIZE
+#        value: 1
+#      - name: EVENTSTORE_EXT_TCP_PORT
+#        value: 1113
+#      - name: EVENTSTORE_HTTP_PORT
+#        value: 2113
+#      - name: EVENTSTORE_ENABLE_EXTERNAL_TCP
+#        value: true
+#      - name: EVENTSTORE_RUN_PROJECTIONS
+#        value: all
+#      - name: EVENTSTORE_START_STANDARD_PROJECTIONS
+#        value: true
+#      - name: EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP
+#        value: true  
