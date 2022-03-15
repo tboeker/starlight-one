@@ -2,11 +2,12 @@
 
 Demo App
 
-Inspired By:
+# App Links
 
-* https://github.com/eventuous
-* https://github.com/dapr
-* https://github.com/dotnet/tye
+* http://localhost:8001/swagger
+* http://localhost:8001/health
+* http://localhost:8001/starships/command
+
 
 # Development
 
@@ -60,7 +61,10 @@ dotnet snitch
 ## dotnet - templates
 
 * https://code-maze.com/dotnet-project-templates-creation/
-* 
+
+## framework - eventuous
+
+* https://github.com/eventuous
 
 # Log the Steps
 

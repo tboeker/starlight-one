@@ -28,6 +28,8 @@ ingress:
         service: swagger
       - path: /health
         service: health
+      - path: /starships/command
+        service: starships-command-api
 
 services:
   - name: swagger
@@ -39,7 +41,12 @@ services:
     project: src/Framework/src/StarlightOne.Health/StarlightOne.Health.csproj
     bindings:
       - protocol: http
-
+    
+  - name: starships-command-api
+    project: src/Starships/src/Starships.CommandApi/Starships.CommandApi.csproj
+    bindings:
+      - protocol: http
+    
   # - name: rockets-query-api
   #   project: src/Rockets/src/Rockets.Query.Api/Rockets.Query.Api.csproj
   #   bindings:
