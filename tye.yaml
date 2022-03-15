@@ -3,12 +3,13 @@ name: Starlight-one
 extensions:
   - name: dapr
     enable-profiling: true
+    placement-port: 50006
     services:
       openapi:
         enabled: false
       health:
         enabled: false
-
+        
   - name: zipkin
   - name: seq
     logPath: ./.logs
@@ -22,8 +23,10 @@ ingress:
         service: openapi
       - path: /health
         service: health
-      - path: /starships/command
-        service: starships-command-api
+      - path: /api/starships/command
+        service: starships-command-api      
+      - path: /api/starships/query
+        service: starships-query-api
 
 services:
   - name: openapi
@@ -36,7 +39,7 @@ services:
     - name: Swagger:Docs:0:Name
       value: starships-command
     - name: Swagger:Docs:0:Url
-      value: /starships/command/swagger/v1/swagger.json
+      value: /api/starships/command/swagger/v1/swagger.json
         
   - name: health
     project: src/Framework/src/StarlightOne.Health/StarlightOne.Health.csproj
@@ -49,15 +52,28 @@ services:
       - protocol: http
     env:
     - name: Ingress:PathBase
-      value: /starships/command
-            
-  #
-  #
-  #- name: dapr-placement
-  #  image: daprio/dapr
-  #  bindings:
-  #    - port: 50006
-    
+      value: /api/starships/command
+
+  - name: starships-command-service
+    project: src/Starships/src/Starships.CommandService/Starships.CommandService.csproj
+    bindings:
+      - protocol: http
+
+  - name: starships-query-api
+    project: src/Starships/src/Starships.QueryApi/Starships.QueryApi.csproj
+    bindings:
+      - protocol: http
+    env:
+      - name: Ingress:PathBase
+        value: /api/starships/query
+        
+  # run own dapr-placement service to keep all in one   
+  - name: dapr-placement
+    image : daprio/dapr:1.6.0
+    args: ./placement -port 50006
+    bindings:
+      - port: 50006
+
   - name: redis
     image: redis
     bindings:

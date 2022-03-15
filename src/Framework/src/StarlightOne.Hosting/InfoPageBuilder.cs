@@ -13,14 +13,25 @@ public class InfoPageOptions
     public bool ShowConfiguration { get; set; } = true;
     public bool ShowSwaggerLinks { get; set; } = true;
 
-    public Dictionary<string, string> Links = new();
+    public List<Link> Links { get; } = new();
 
-    public void AddLink(string name, string url)
+    public void AddLink(string name, string url, bool useIngressPath = true)
     {
-        Links.Add(name, url);
+        Links.Add(new Link
+        {
+            Name = name,
+            Url = url,
+            UseIngressPath = useIngressPath
+        });
+    }
+
+    public class Link
+    {
+        public string? Name { get; init; }
+        public string? Url { get; init; }
+        public bool UseIngressPath { get; init; }
     }
 }
-//public record InfoPageOptions(bool ShowConfiguration = true, bool ShowSwaggerDocLink = true);
 
 public class InfoPageBuilder
 {
@@ -57,17 +68,20 @@ public class InfoPageBuilder
             var links = new StringBuilder();
             if (options.ShowSwaggerLinks)
             {
-                AddLink(links, "SwaggerDoc", SwaggerExtensions.SwaggerV1SwaggerJson, ingress.PathBase);
+                options.AddLink("SwaggerDoc", SwaggerExtensions.SwaggerV1SwaggerJson);
 
                 if (app.Environment.IsDevelopment())
                 {
-                    AddLink(links, "SwaggerUi", "/swagger", ingress.PathBase);
+                    options.AddLink("SwaggerUi", "/swagger", true);
                 }
             }
 
-            foreach (var pair in options.Links)
+            foreach (var link in options.Links)
             {
-                AddLink(links, pair.Key, pair.Value, ingress.PathBase);
+                if (link.UseIngressPath)
+                    AddLink(links, link.Name, link.Url, ingress.PathBase);
+                else
+                    AddLink(links, link.Name, link.Url, string.Empty);
             }
 
             if (links.Length > 0)
@@ -94,8 +108,9 @@ public class InfoPageBuilder
         return _content;
     }
 
-    private void AddLink(StringBuilder sb, string text, string url, string? ingressPathBase)
+    private void AddLink(StringBuilder sb, string? text, string? url, string? ingressPathBase)
     {
+        
         if (string.IsNullOrEmpty(ingressPathBase))
             sb.AppendLine($"<a href={url}>{text}</a>");
         else

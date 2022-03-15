@@ -1,6 +1,3 @@
-using Microsoft.Extensions.Options;
-using Serilog;
-
 var builder = WebApplication.CreateBuilder(args);
 var log = builder.AddMySerilog();
 builder.AddMyIngress(log);
@@ -14,8 +11,8 @@ app.UseMyIngress(log);
 app.UseMyInfoPage(c =>
 {
     c.ShowSwaggerLinks = false;
-    c.Links.Add("SwaggerUi", "/swagger");
-    c.Links.Add("SwaggerDocs", "/swaggerdocs");
+    c.AddLink("SwaggerUi", "/swagger", false);
+    c.AddLink("SwaggerDocs", "/swaggerdocs", false);
 });
 
 var options = app.Services.GetRequiredService<IOptions<MySwaggerOptions>>().Value;

@@ -5,8 +5,8 @@
         <RootNamespace>StarlightOne</RootNamespace>
     </PropertyGroup>
 
-    <ItemGroup>
-        <Using Include="StarlightOne"/>
-    </ItemGroup>
+<!--    <ItemGroup>-->
+<!--        <Using Include="StarlightOne"/>-->
+<!--    </ItemGroup>-->
 
 </Project>    

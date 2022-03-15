@@ -1,0 +1,4 @@
+﻿GET http://localhost:8001/api/starships/query/starship/list
+Accept: application/json
+
+###

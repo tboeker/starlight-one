@@ -4,9 +4,11 @@ Demo App
 
 # App Links
 
+* http://localhost:8000
 * http://localhost:8001/swagger
 * http://localhost:8001/health
-* http://localhost:8001/starships/command
+* http://localhost:8001/api/starships/command
+* http://localhost:8001/api/starships/query
 * http://localhost:5341
 * http://localhost:9411
 
@@ -48,6 +50,7 @@ dotnet snitch
 
 * https://github.com/dapr
 * https://docs.dapr.io/getting-started/
+* https://docs.dapr.io/operations/hosting/self-hosted/self-hosted-with-docker/
 
 ## sdks
 
@@ -94,6 +97,9 @@ docker rm -f $(docker ps -aq)
 ```
 dotnet new so-public-api --name Starships.CommandApi --output ./src/Starships/src/Starships.CommandApi
 dotnet sln .\starlight-one.sln add ./src/Starships/src/Starships.CommandApi
+
+dotnet new so-public-api --name Starships.CommandService --output ./src/Starships/src/Starships.CommandService
+dotnet sln .\starlight-one.sln add ./src/Starships/src/Starships.CommandService
 ```
 
 ```

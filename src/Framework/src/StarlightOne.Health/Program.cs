@@ -1,5 +1,3 @@
-using Serilog;
-
 var builder = WebApplication.CreateBuilder(args);
 var log = builder.AddMySerilog();
 builder.AddMyIngress(log);

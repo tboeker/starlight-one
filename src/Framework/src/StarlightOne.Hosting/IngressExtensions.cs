@@ -7,6 +7,17 @@ namespace StarlightOne;
 public class IngressOptions
 {
     public string? PathBase { get; set; }
+
+    public string GetPath(string path)
+    {
+        if (string.IsNullOrEmpty(PathBase))
+            return path;
+
+        path = path.EnsureNotStartsWith('/');
+        return $"{PathBase.EnsureEndsWith('/')}{path}";
+    }
+
+    public bool HasPathBase() => !string.IsNullOrEmpty(PathBase);
 }
 
 public static class IngressExtensions
@@ -14,24 +25,21 @@ public static class IngressExtensions
     public static void AddMyIngress(this WebApplicationBuilder builder, Action<string> log)
     {
         log("Ingress: Adding Configuration");
-
         builder.Services.Configure<IngressOptions>(builder.Configuration.GetSection("Ingress"));
-        
-        // builder.Services
-        //     .AddOptions<IngressOptions>()
-        //     .Configure(options => builder.Configuration.Bind("Ingress", options))
-        //     ;
     }
 
 
     public static void UseMyIngress(this WebApplication app, Action<string> log)
     {
-        var options = app.Services.GetRequiredService<IOptions<IngressOptions>>().Value;
+        var ingress = app.Services.GetRequiredService<IOptions<IngressOptions>>().Value;
 
-        if (!string.IsNullOrEmpty(options.PathBase))
+        app.UseForwardedHeaders();
+
+        if (ingress.HasPathBase())
         {
-            log($"Ingress: UsePathBase: {options.PathBase}");
-            app.UsePathBase(options.PathBase);
+            var p = ingress.PathBase.EnsureStartsWith('/').EnsureNotEndsWith('/');
+            log($"Ingress: UsePathBase: {p}");
+            app.UsePathBase(p);
         }
     }
 }

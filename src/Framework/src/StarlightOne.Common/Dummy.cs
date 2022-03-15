@@ -1,5 +1,6 @@
 ﻿namespace StarlightOne;
 
-public class Class1
+public class Dummy
 {
+    
 }
