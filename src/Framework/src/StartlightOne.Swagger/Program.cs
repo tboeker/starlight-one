@@ -1,6 +1,11 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using Serilog;
 
-app.MapGet("/", () => "Hello World!");
+var builder = WebApplication.CreateBuilder(args);
+builder.AddMySerilog();
+
+var app = builder.Build();
+app.UseSerilogRequestLogging();
+app.UseMyInfoPage();
+
 
 app.Run();

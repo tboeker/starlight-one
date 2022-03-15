@@ -7,7 +7,7 @@ namespace StartlightOne;
 
 public static class SerilogExtensions
 {
-    public static void AddSerilog(this WebApplicationBuilder builder)
+    public static void AddMySerilog(this WebApplicationBuilder builder)
     {
         var logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
@@ -15,7 +15,7 @@ public static class SerilogExtensions
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
             .MinimumLevel.Override("Grpc", LogEventLevel.Information)
             .MinimumLevel.Override("Grpc.Net.Client.Internal.GrpcCall", LogEventLevel.Error)
-            .MinimumLevel.Override("Microsoft.AspNetCore.Mvc.Infrastructure", LogEventLevel.Warning)
+            // .MinimumLevel.Override("Microsoft.AspNetCore.Mvc.Infrastructure", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .WriteTo.Console()
             .WriteTo.Seq("http://localhost:5341")
@@ -26,5 +26,7 @@ public static class SerilogExtensions
         builder.Logging.ClearProviders();
 
         builder.Host.UseSerilog();
+        
+        
     }
 }

@@ -1,10 +1,10 @@
 ﻿{
   "profiles": {
-    "StartlightOne.Swagger": {
+    "PublicApi": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:5001",
+      "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

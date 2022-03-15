@@ -1,22 +1,40 @@
-name: tbrocket1
+name: startlight-one
 
 extensions:
   - name: dapr
     enable-profiling: true
+    services: 
+      swagger:
+        enabled: false
+      health:
+        enabled: false
+
       #    services:
       #      rocket-query-api:
       #        enabled: false    
       #      rocket-command-api:
       #        enabled: false  
   #- name: zipkin
+
   - name: seq
     logPath: ./.logs
+
+ingress:
+  - name:  ingress
+    bindings:
+      - port: 8001
+    rules:
+      - path: /swagger
+        service: swagger
+      - path: /health
+        service: health
 
 services:
   - name: swagger
     project: src/Framework/src/StartlightOne.Swagger/StartlightOne.Swagger.csproj
     bindings:
       - protocol: http
+      
   - name: health
     project: src/Framework/src/StartlightOne.Health/StartlightOne.Health.csproj
     bindings:

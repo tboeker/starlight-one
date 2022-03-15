@@ -17,6 +17,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartlightOne.Hosting", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartlightOne.Swagger", "src\Framework\src\StartlightOne.Swagger\StartlightOne.Swagger.csproj", "{D4B6FBF1-3015-4E20-AE70-89C2A372BC3D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{FCEC3986-4010-4310-A474-5DC50D0FB559}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublicApi", "templates\PublicApi\PublicApi.csproj", "{670129CB-9141-42FE-952F-C00277E78C85}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".files", ".files", "{1DB3D30C-A45D-4FE0-9386-238920F37C43}"
+	ProjectSection(SolutionItems) = preProject
+		clean.ps1 = clean.ps1
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		global.json = global.json
+		nuget.config = nuget.config
+		README.md = README.md
+		create-templates.ps1 = create-templates.ps1
+		tye.yaml = tye.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Starships", "Starships", "{A0FFAA6C-58B7-4D02-BABB-0F5B8E2D2733}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{639B493C-EFB3-4FC9-BD39-BD9A2454AA09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.CommandApi", "src\Starships\src\Starships.CommandApi\Starships.CommandApi.csproj", "{4C17526F-05A0-426D-9287-7763696615BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +64,14 @@ Global
 		{D4B6FBF1-3015-4E20-AE70-89C2A372BC3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4B6FBF1-3015-4E20-AE70-89C2A372BC3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4B6FBF1-3015-4E20-AE70-89C2A372BC3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{670129CB-9141-42FE-952F-C00277E78C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{670129CB-9141-42FE-952F-C00277E78C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{670129CB-9141-42FE-952F-C00277E78C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{670129CB-9141-42FE-952F-C00277E78C85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C17526F-05A0-426D-9287-7763696615BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C17526F-05A0-426D-9287-7763696615BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C17526F-05A0-426D-9287-7763696615BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C17526F-05A0-426D-9287-7763696615BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1D1C75F3-318C-49E5-A105-3B1028F5FAB1} = {218F10ED-5B5E-4E03-B37E-D1DB4A6915E9}
@@ -50,5 +80,9 @@ Global
 		{7E23B450-EB11-4729-A464-2CF0C5221452} = {8CE6BF9A-22F3-4795-89B6-5C16F8BD6C66}
 		{F8D1D3E5-556C-4D6E-8A23-41F0BF40E4AC} = {8CE6BF9A-22F3-4795-89B6-5C16F8BD6C66}
 		{D4B6FBF1-3015-4E20-AE70-89C2A372BC3D} = {8CE6BF9A-22F3-4795-89B6-5C16F8BD6C66}
+		{670129CB-9141-42FE-952F-C00277E78C85} = {FCEC3986-4010-4310-A474-5DC50D0FB559}
+		{A0FFAA6C-58B7-4D02-BABB-0F5B8E2D2733} = {218F10ED-5B5E-4E03-B37E-D1DB4A6915E9}
+		{639B493C-EFB3-4FC9-BD39-BD9A2454AA09} = {A0FFAA6C-58B7-4D02-BABB-0F5B8E2D2733}
+		{4C17526F-05A0-426D-9287-7763696615BC} = {639B493C-EFB3-4FC9-BD39-BD9A2454AA09}
 	EndGlobalSection
 EndGlobal

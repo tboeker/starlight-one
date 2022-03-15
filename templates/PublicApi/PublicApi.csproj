@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <ItemGroup>
+        <ProjectReference Include="$(FrameworkRoot)\StartlightOne.Hosting\StartlightOne.Hosting.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Using Include="StartlightOne"/>
+        <Using Include="Serilog"/>
+    </ItemGroup>
+
+</Project>
