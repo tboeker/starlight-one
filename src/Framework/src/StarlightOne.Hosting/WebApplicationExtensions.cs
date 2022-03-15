@@ -6,9 +6,12 @@ namespace StarlightOne;
 
 public static class WebApplicationExtensions
 {
-    public static void UseMyInfoPage(this WebApplication app, InfoPageOptions? options = null)
+    public static void UseMyInfoPage(this WebApplication app, Action<InfoPageOptions>? setup = null)
     {
-        
+        var options = new InfoPageOptions();
+        if (setup != null)
+            setup(options);
+
         var ipb = new InfoPageBuilder(Assembly.GetEntryAssembly(), app, options);
 
         app.MapGet("/",

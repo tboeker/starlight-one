@@ -1,13 +1,14 @@
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddMySerilog();
+var log = builder.AddMySerilog();
+builder.AddMyIngress(log);
+
 
 var app = builder.Build();
 app.UseSerilogRequestLogging();
-app.UseMyInfoPage(new InfoPageOptions()
-{
-    ShowSwaggerDocLink = false
-});
+app.UseMyIngress(log);
+
+app.UseMyInfoPage(c => c.ShowSwaggerLinks = false);
 
 app.Run();

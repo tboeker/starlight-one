@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarlightOne.Health", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarlightOne.Hosting", "src\Framework\src\StarlightOne.Hosting\StarlightOne.Hosting.csproj", "{F8D1D3E5-556C-4D6E-8A23-41F0BF40E4AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarlightOne.Swagger", "src\Framework\src\StarlightOne.Swagger\StarlightOne.Swagger.csproj", "{D4B6FBF1-3015-4E20-AE70-89C2A372BC3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarlightOne.OpenApi", "src\Framework\src\StarlightOne.OpenApi\StarlightOne.OpenApi.csproj", "{D4B6FBF1-3015-4E20-AE70-89C2A372BC3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{FCEC3986-4010-4310-A474-5DC50D0FB559}"
 EndProject

@@ -3,8 +3,8 @@ name: Starlight-one
 extensions:
   - name: dapr
     enable-profiling: true
-    services: 
-      swagger:
+    services:
+      openapi:
         enabled: false
       health:
         enabled: false
@@ -18,19 +18,26 @@ ingress:
     bindings:
       - port: 8001
     rules:
-      - path: /swagger
-        service: swagger
+      - path: /openapi
+        service: openapi
       - path: /health
         service: health
       - path: /starships/command
         service: starships-command-api
 
 services:
-  - name: swagger
-    project: src/Framework/src/StarlightOne.Swagger/StarlightOne.Swagger.csproj
+  - name: openapi
+    project: src/Framework/src/StarlightOne.OpenApi/StarlightOne.OpenApi.csproj
     bindings:
       - protocol: http
-      
+    env: 
+    - name: Ingress:PathBase
+      value: /openapi
+    - name: Swagger:Docs:0:Name
+      value: starships-command
+    - name: Swagger:Docs:0:Url
+      value: /starships/command/swagger/v1/swagger.json
+        
   - name: health
     project: src/Framework/src/StarlightOne.Health/StarlightOne.Health.csproj
     bindings:

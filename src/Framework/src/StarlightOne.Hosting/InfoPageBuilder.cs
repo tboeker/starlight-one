@@ -8,7 +8,19 @@ using Microsoft.Extensions.Options;
 
 namespace StarlightOne;
 
-public record InfoPageOptions(bool ShowConfiguration = true, bool ShowSwaggerDocLink = true);
+public class InfoPageOptions
+{
+    public bool ShowConfiguration { get; set; } = true;
+    public bool ShowSwaggerLinks { get; set; } = true;
+
+    public Dictionary<string, string> Links = new();
+
+    public void AddLink(string name, string url)
+    {
+        Links.Add(name, url);
+    }
+}
+//public record InfoPageOptions(bool ShowConfiguration = true, bool ShowSwaggerDocLink = true);
 
 public class InfoPageBuilder
 {
@@ -43,9 +55,19 @@ public class InfoPageBuilder
             body.AppendLine(GetInfo(assembly, env));
 
             var links = new StringBuilder();
-            if (options.ShowSwaggerDocLink)
+            if (options.ShowSwaggerLinks)
             {
                 AddLink(links, "SwaggerDoc", SwaggerExtensions.SwaggerV1SwaggerJson, ingress.PathBase);
+
+                if (app.Environment.IsDevelopment())
+                {
+                    AddLink(links, "SwaggerUi", "/swagger", ingress.PathBase);
+                }
+            }
+
+            foreach (var pair in options.Links)
+            {
+                AddLink(links, pair.Key, pair.Value, ingress.PathBase);
             }
 
             if (links.Length > 0)
@@ -78,6 +100,8 @@ public class InfoPageBuilder
             sb.AppendLine($"<a href={url}>{text}</a>");
         else
             sb.AppendLine($"<a href={ingressPathBase}{url}>{text}</a>");
+
+        sb.AppendLine("</br>");
     }
 
     private void AddTag(StringBuilder sb, string tag, string? value)
