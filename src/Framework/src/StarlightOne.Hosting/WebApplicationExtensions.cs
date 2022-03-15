@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace StartlightOne;
+namespace StarlightOne;
 
 public static class WebApplicationExtensions
 {

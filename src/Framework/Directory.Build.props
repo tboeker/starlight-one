@@ -2,11 +2,11 @@
     <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)..\, Directory.Build.props))\Directory.Build.props" />
 
     <PropertyGroup>
-        <RootNamespace>StartlightOne</RootNamespace>
+        <RootNamespace>StarlightOne</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="StartlightOne"/>
+        <Using Include="StarlightOne"/>
     </ItemGroup>
 
 </Project>    

@@ -1,4 +1,4 @@
-name: startlight-one
+name: Starlight-one
 
 extensions:
   - name: dapr
@@ -31,12 +31,12 @@ ingress:
 
 services:
   - name: swagger
-    project: src/Framework/src/StartlightOne.Swagger/StartlightOne.Swagger.csproj
+    project: src/Framework/src/StarlightOne.Swagger/StarlightOne.Swagger.csproj
     bindings:
       - protocol: http
       
   - name: health
-    project: src/Framework/src/StartlightOne.Health/StartlightOne.Health.csproj
+    project: src/Framework/src/StarlightOne.Health/StarlightOne.Health.csproj
     bindings:
       - protocol: http
 

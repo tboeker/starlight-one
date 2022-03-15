@@ -1,4 +1,4 @@
-# Startlight One Demo
+# Starlight One Demo
 
 Demo App
 

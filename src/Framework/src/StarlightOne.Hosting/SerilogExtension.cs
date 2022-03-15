@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 
-namespace StartlightOne;
+namespace StarlightOne;
 
 public static class SerilogExtensions
 {

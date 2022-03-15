@@ -3,7 +3,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace StartlightOne;
+namespace StarlightOne;
 
 public record InfoPageOptions(bool ShowConfiguration = true, bool ShowSwaggerDocLink = true);
 

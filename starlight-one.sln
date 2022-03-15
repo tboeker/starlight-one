@@ -9,13 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8CE6BF9A-22F3-4795-89B6-5C16F8BD6C66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartlightOne.Common", "src\Framework\src\StartlightOne.Common\StartlightOne.Common.csproj", "{5DE67E5F-30A6-4B2A-9AC7-16B7E24FF599}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarlightOne.Common", "src\Framework\src\StarlightOne.Common\StarlightOne.Common.csproj", "{5DE67E5F-30A6-4B2A-9AC7-16B7E24FF599}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartlightOne.Health", "src\Framework\src\StartlightOne.Health\StartlightOne.Health.csproj", "{7E23B450-EB11-4729-A464-2CF0C5221452}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarlightOne.Health", "src\Framework\src\StarlightOne.Health\StarlightOne.Health.csproj", "{7E23B450-EB11-4729-A464-2CF0C5221452}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartlightOne.Hosting", "src\Framework\src\StartlightOne.Hosting\StartlightOne.Hosting.csproj", "{F8D1D3E5-556C-4D6E-8A23-41F0BF40E4AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarlightOne.Hosting", "src\Framework\src\StarlightOne.Hosting\StarlightOne.Hosting.csproj", "{F8D1D3E5-556C-4D6E-8A23-41F0BF40E4AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartlightOne.Swagger", "src\Framework\src\StartlightOne.Swagger\StartlightOne.Swagger.csproj", "{D4B6FBF1-3015-4E20-AE70-89C2A372BC3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarlightOne.Swagger", "src\Framework\src\StarlightOne.Swagger\StarlightOne.Swagger.csproj", "{D4B6FBF1-3015-4E20-AE70-89C2A372BC3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{FCEC3986-4010-4310-A474-5DC50D0FB559}"
 EndProject
