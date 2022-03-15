@@ -8,7 +8,8 @@ public static class WebApplicationExtensions
 {
     public static void UseMyInfoPage(this WebApplication app, InfoPageOptions? options = null)
     {
-        var ipb = new InfoPageBuilder(Assembly.GetEntryAssembly(), app.Environment, options, app.Configuration);
+        
+        var ipb = new InfoPageBuilder(Assembly.GetEntryAssembly(), app, options);
 
         app.MapGet("/",
             async context =>

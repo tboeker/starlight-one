@@ -9,13 +9,7 @@ extensions:
       health:
         enabled: false
 
-      #    services:
-      #      rocket-query-api:
-      #        enabled: false    
-      #      rocket-command-api:
-      #        enabled: false  
-  #- name: zipkin
-
+  - name: zipkin
   - name: seq
     logPath: ./.logs
 
@@ -46,39 +40,21 @@ services:
     project: src/Starships/src/Starships.CommandApi/Starships.CommandApi.csproj
     bindings:
       - protocol: http
+    env:
+    - name: Ingress:PathBase
+      value: /starships/command
+            
+  #
+  #
+  #- name: dapr-placement
+  #  image: daprio/dapr
+  #  bindings:
+  #    - port: 50006
     
-  # - name: rockets-query-api
-  #   project: src/Rockets/src/Rockets.Query.Api/Rockets.Query.Api.csproj
-  #   bindings:
-  #     - protocol: http
-
-  # - name: rockets-query-services
-  #   project: src/Rockets/src/Rockets.Query.Services/Rockets.Query.Services.csproj
-  #   bindings:
-  #     - protocol: http
-
-  # - name: rockets-command-api
-  #   project: src/Rockets/src/Rockets.Command.Api/Rockets.Command.Api.csproj
-  #   bindings:
-  #     - protocol: http
-
-  # - name: rockets-command-service
-  #   project: src/Rockets/src/Rockets.Command.Services/Rockets.Command.Services.csproj
-  #   bindings:
-  #     - protocol: http
-    
-    
-    #
-    #
-    #- name: dapr-placement
-    #  image: daprio/dapr
-    #  bindings:
-    #    - port: 50006
-    
-    #- name: redis
-    #  image: redis
-    #  bindings:
-    #    - port: 6379      
+  - name: redis
+    image: redis
+    bindings:
+      - port: 6379      
     
     #- name: redis-cli
     #  image: redis

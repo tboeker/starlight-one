@@ -7,14 +7,15 @@ Demo App
 * http://localhost:8001/swagger
 * http://localhost:8001/health
 * http://localhost:8001/starships/command
-
+* http://localhost:5341
+* http://localhost:9411
 
 # Development
 
 ```
 # run application
 dotnet tool restore
-dotnet tye run
+dotnet tye run --watch
 ```
 
 ```
@@ -56,7 +57,7 @@ dotnet snitch
 ## dotnet 6 - minimal api
 
 * https://gist.github.com/davidfowl/ff1addd02d239d2d26f4648a06158727
-*  https://medium.com/geekculture/minimal-apis-in-net-6-a-complete-guide-beginners-advanced-fd64f4da07f5
+* https://medium.com/geekculture/minimal-apis-in-net-6-a-complete-guide-beginners-advanced-fd64f4da07f5
 
 ## dotnet - templates
 
@@ -85,6 +86,9 @@ dotnet tool install --local Snitch --version 1.10.0
 dapr init
 
 dotnet tye run
+
+# cleanup docker images
+docker rm -f $(docker ps -aq)
 ```
 
 ```

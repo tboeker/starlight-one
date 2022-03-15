@@ -10,8 +10,10 @@ public static class SwaggerExtensions
     
     public const string SwaggerV1SwaggerJson = "/swagger/v1/swagger.json";
     
-    public static void AddMySwagger(this WebApplicationBuilder builder)
+    public static void AddMySwagger(this WebApplicationBuilder builder, Action<string> log)
     {
+        log($"Adding SwaggerDoc: {builder.Environment.ApplicationName}");
+        
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(c =>
         {
@@ -21,10 +23,12 @@ public static class SwaggerExtensions
         });
     }
 
-    public static void UseMySwagger(this WebApplication app)
+    public static void UseMySwagger(this WebApplication app, Action<string> log)
     {
         if (app.Environment.IsDevelopment())
         {
+            log("Use Swagger and SwaggerUI");
+            
             app.UseSwagger();
             app.UseSwaggerUI(
                 c =>

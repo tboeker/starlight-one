@@ -1,11 +1,12 @@
 var builder = WebApplication.CreateBuilder(args);
-builder.AddMySerilog();
-builder.AddMySwagger();
+
+var log = builder.AddMySerilog();
+builder.AddMySwagger(log);
 
 var app = builder.Build();
 app.UseSerilogRequestLogging();
 
 app.UseMyInfoPage();
-app.UseMySwagger();
+app.UseMySwagger(log);
 
 app.Run();

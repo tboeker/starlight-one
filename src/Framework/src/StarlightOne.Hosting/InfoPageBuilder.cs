@@ -1,7 +1,10 @@
 ﻿using System.Reflection;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace StarlightOne;
 
@@ -11,8 +14,7 @@ public class InfoPageBuilder
 {
     private readonly string _content;
 
-    public InfoPageBuilder(Assembly? assembly, IHostEnvironment webHostEnvironment, InfoPageOptions? options,
-        IConfiguration? configuration)
+    public InfoPageBuilder(Assembly? assembly, WebApplication app, InfoPageOptions? options)
     {
         if (assembly == null)
         {
@@ -24,6 +26,10 @@ public class InfoPageBuilder
             options = new InfoPageOptions();
         }
 
+        var env = app.Environment;
+        var config = app.Configuration;
+        var ingress = app.Services.GetRequiredService<IOptions<IngressOptions>>().Value;
+
         var sb = new StringBuilder();
 
         var head = new StringBuilder();
@@ -34,12 +40,12 @@ public class InfoPageBuilder
 
         var body = new StringBuilder();
         {
-            body.AppendLine(GetInfo(assembly, webHostEnvironment));
+            body.AppendLine(GetInfo(assembly, env));
 
             var links = new StringBuilder();
             if (options.ShowSwaggerDocLink)
             {
-                AddLink(links, "SwaggerDoc", SwaggerExtensions.SwaggerV1SwaggerJson);
+                AddLink(links, "SwaggerDoc", SwaggerExtensions.SwaggerV1SwaggerJson, ingress.PathBase);
             }
 
             if (links.Length > 0)
@@ -49,9 +55,9 @@ public class InfoPageBuilder
             }
 
 
-            if (options.ShowConfiguration && configuration != null)
+            if (options.ShowConfiguration)
             {
-                body.AppendLine(GetConfiguration(configuration));
+                body.AppendLine(GetConfiguration(config));
             }
         }
 
@@ -66,9 +72,12 @@ public class InfoPageBuilder
         return _content;
     }
 
-    private void AddLink(StringBuilder sb, string text, string url)
+    private void AddLink(StringBuilder sb, string text, string url, string? ingressPathBase)
     {
-        sb.AppendLine($"<a href={url}>{text}</a>");
+        if (string.IsNullOrEmpty(ingressPathBase))
+            sb.AppendLine($"<a href={url}>{text}</a>");
+        else
+            sb.AppendLine($"<a href={ingressPathBase}{url}>{text}</a>");
     }
 
     private void AddTag(StringBuilder sb, string tag, string? value)
