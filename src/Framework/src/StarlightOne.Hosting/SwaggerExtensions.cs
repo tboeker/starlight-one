@@ -47,7 +47,7 @@ public static class SwaggerExtensions
             if (_ingress.HasPathBase())
             {
                 _log($"ConfigureSwaggerGen: Add IngressPathFilter");
-                options.OperationFilter<IngressPathFilter>(_ingress, _log);
+                options.DocumentFilter<IngressPathFilter>(_ingress, _log);
             }
 
             options.SwaggerDoc("v1",
@@ -62,7 +62,7 @@ public static class SwaggerExtensions
     }
 
     // ReSharper disable once ClassNeverInstantiated.Local
-    private class IngressPathFilter : IOperationFilter
+    private class IngressPathFilter : IDocumentFilter
     {
         private readonly IngressOptions _ingress;
         private readonly Action<string> _log;
@@ -73,9 +73,23 @@ public static class SwaggerExtensions
             _log = log;
         }
 
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        // public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        // {
+        //     _log(operation.OperationId);
+        //     
+        //     
+        // }
+
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            _log(operation.OperationId);
+            var editedPaths = new OpenApiPaths();
+            foreach (var (key, value) in swaggerDoc.Paths)
+            {
+                var newKey = _ingress.GetPath(key).EnsureStartsWith('/');
+                editedPaths.Add(newKey, value);
+            }
+
+            swaggerDoc.Paths = editedPaths;
         }
     }
 

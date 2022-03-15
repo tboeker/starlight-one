@@ -39,7 +39,11 @@ services:
     - name: Swagger:Docs:0:Name
       value: starships-command
     - name: Swagger:Docs:0:Url
-      value: /api/starships/command/swagger/v1/swagger.json
+      value: /api/starships/command/swagger/v1/swagger.json    
+    - name: Swagger:Docs:1:Name
+      value: starships-query
+    - name: Swagger:Docs:1:Url
+      value: /api/starships/query/swagger/v1/swagger.json
         
   - name: health
     project: src/Framework/src/StarlightOne.Health/StarlightOne.Health.csproj

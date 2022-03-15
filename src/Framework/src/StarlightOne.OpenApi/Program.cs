@@ -1,18 +1,19 @@
 var builder = WebApplication.CreateBuilder(args);
+
 var log = builder.AddMySerilog();
 builder.AddMyIngress(log);
-
 builder.Services.Configure<MySwaggerOptions>(builder.Configuration.GetSection("Swagger"));
 
 var app = builder.Build();
-app.UseSerilogRequestLogging();
 app.UseMyIngress(log);
+app.UseSerilogRequestLogging();
+
 
 app.UseMyInfoPage(c =>
 {
     c.ShowSwaggerLinks = false;
-    c.AddLink("SwaggerUi", "/swagger", false);
-    c.AddLink("SwaggerDocs", "/swaggerdocs", false);
+    c.AddLink("SwaggerUi", "/swagger", true);
+    c.AddLink("SwaggerDocs", "/swaggerdocs", true);
 });
 
 var options = app.Services.GetRequiredService<IOptions<MySwaggerOptions>>().Value;

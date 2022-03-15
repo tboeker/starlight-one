@@ -112,9 +112,9 @@ public class InfoPageBuilder
     {
         
         if (string.IsNullOrEmpty(ingressPathBase))
-            sb.AppendLine($"<a href={url}>{text}</a>");
+            sb.AppendLine($"<a href={url} target=\"_blank\">{text}</a>");
         else
-            sb.AppendLine($"<a href={ingressPathBase}{url}>{text}</a>");
+            sb.AppendLine($"<a href={ingressPathBase}{url} target=\"_blank\">{text}</a>");
 
         sb.AppendLine("</br>");
     }
