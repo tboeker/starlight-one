@@ -1,4 +1,3 @@
-
 # pre-requisites:
 # - initialized with: dapr init --slim
 #   so that redis is running as container and placement service is started on demand
@@ -22,6 +21,7 @@ Param(
     , [string] $skipAppId
 )
 
+$host.ui.RawUI.WindowTitle = 'starlight-one'
 
 $configProjects = @(
     @{
