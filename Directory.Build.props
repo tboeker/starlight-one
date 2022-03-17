@@ -18,9 +18,9 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(IsFrameworkProject)' != 'true'">
-        <ProjectReference Include="$(FrameworkRoot)\StarlightOne.Common\StarlightOne.Common.csproj" />
+        <ProjectReference Include="$(FrameworkRoot)\StarlightOne.Common\StarlightOne.Common.csproj"/>
     </ItemGroup>
-    
+
     <ItemGroup Condition="'$(IsTestProject)' != 'true'">
         <PackageReference Include="MinVer" Version="3.0.0" PrivateAssets="All"/>
         <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" PrivateAssets="All"/>
@@ -34,7 +34,7 @@
         <Using Include="Microsoft.AspNetCore.Mvc"/>
         <Using Include="Microsoft.Extensions.Options"/>
         <Using Include="Microsoft.Extensions.Logging"/>
-        <ProjectReference Include="$(FrameworkRoot)\StarlightOne.Hosting\StarlightOne.Hosting.csproj" />
+        <ProjectReference Include="$(FrameworkRoot)\StarlightOne.Hosting\StarlightOne.Hosting.csproj"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(IsTestProject)' == 'true'">
@@ -61,6 +61,7 @@
 
     <PropertyGroup>
         <VSTestLogger>trx</VSTestLogger>
+<!--        <DOTNET_RUNNING_IN_DAPR_DEV>true</DOTNET_RUNNING_IN_DAPR_DEV>-->
     </PropertyGroup>
 
     <PropertyGroup Label="Package versions for .NET 6" Condition="$(TargetFramework) == 'net6.0'">
@@ -71,5 +72,10 @@
     <ItemGroup Condition="'$(IncludeTestHost)' == 'true'">
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftTestHostVer)"/>
     </ItemGroup>
+
+<!--    <PropertyGroup Condition="'$(DOTNET_RUNNING_IN_DAPR_DEV)' == 'true'">-->
+<!--        <BaseIntermediateOutputPath>$(MSBuildProjectDirectory)/obj/daprdev/</BaseIntermediateOutputPath>-->
+<!--        <BaseOutputPath>$(MSBuildProjectDirectory)/bin/daprdev/</BaseOutputPath>-->
+<!--    </PropertyGroup>-->
 
 </Project>

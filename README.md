@@ -21,6 +21,20 @@ dotnet tye run --watch
 ```
 
 ```
+# run with compose and dapr as job
+dotnet tool restore
+dotnet build
+
+docker-compose up
+
+dotnet tye run --watch
+
+docker-compose down --remove-orphans
+```
+
+
+
+```
 # build and install project templates
 # templates.ps1
 dotnet build
@@ -51,6 +65,7 @@ dotnet snitch
 * https://github.com/dapr
 * https://docs.dapr.io/getting-started/
 * https://docs.dapr.io/operations/hosting/self-hosted/self-hosted-with-docker/
+* https://dev.to/kaiwalter/simple-approach-to-run-and-debug-multiple-net-dapr-projects-w-o-docker-289k
 
 ## sdks
 
