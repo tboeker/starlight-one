@@ -68,5 +68,12 @@ services:
     networks:
       - starlight-one
 
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    networks:
+      - starlight-one
+      
 networks:
   starlight-one:

@@ -82,8 +82,7 @@ foreach ($configProject in $configProjects) {
 Write-Host "Removing previous Jobs"
 $jobNamePattern = $configProjects | Join-String -Property appId -Separator "|" -OutputPrefix "(placement|" -OutputSuffix ")"
 # Get-Job | Write-Host $_.Name
-
-# Get-Job | ? { $_.Name -match $jobNamePattern } | Stop-Job -PassThru | Remove-Job | Out-Host
+Get-Job | ? { $_.Name -match $jobNamePattern } | Stop-Job -PassThru | Remove-Job | Out-Host
 
 if ($skipRun)
 {
@@ -119,19 +118,19 @@ foreach ($configProject in $configProjects) {
     # $configFile = Join-Path $configProject.folder "tracing.yaml" -Resolve
     $componentsPath = Join-Path "./" "components/" -Resolve
 
-    $ASPNETCORE_URLS = "http://localhost:" + $APP_PORT + ";https://localhost:" + $($APP_PORT + 1)
+    # $ASPNETCORE_URLS = "http://localhost:" + $APP_PORT + ";https://localhost:" + $($APP_PORT + 1)
 
     $launchSettings = Get-Content $launchSettingsFile | ConvertFrom-Json
 
     "-" * 80
 
-    foreach ($profile in $launchSettings.profiles.PSObject.Properties) {
-        if ($profile.Name -eq $configProject.settingName) {
-            Update-EnvironmentVariable $profile.Value.environmentVariables "ASPNETCORE_URLS" $ASPNETCORE_URLS
-            Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_HTTP_PORT" $DAPR_HTTP_PORT.ToString()
-            Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_GRPC_PORT" $DAPR_GRPC_PORT.ToString()
-        }
-    }
+    # foreach ($profile in $launchSettings.profiles.PSObject.Properties) {
+    #     if ($profile.Name -eq $configProject.settingName) {
+    #         Update-EnvironmentVariable $profile.Value.environmentVariables "ASPNETCORE_URLS" $ASPNETCORE_URLS
+    #         Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_HTTP_PORT" $DAPR_HTTP_PORT.ToString()
+    #         Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_GRPC_PORT" $DAPR_GRPC_PORT.ToString()
+    #     }
+    # }
 
     $launchSettings | ConvertTo-Json -Depth 10 | Set-Content $launchSettingsFile
     Write-Host "updated" $launchSettingsFile
@@ -139,14 +138,16 @@ foreach ($configProject in $configProjects) {
     $jobName = $configProject.appId + "-daprd"
 
     Write-Host "start Daprd in background" $configProject.appId $APP_PORT $env:DAPR_HTTP_PORT $env:DAPR_GRPC_PORT $env:METRICS_PORT
+    
+    Write-Host "dapr run --app-id $($configProject.appId) --app-port $APP_PORT --placement-host-address "http://localhost:$DAPR_PLACEMENT_PORT" --log-level debug --components-path $componentsPath --dapr-http-port $DAPR_HTTP_PORT --dapr-grpc-port $DAPR_GRPC_PORT --metrics-port $METRICS_PORT"
 
     Start-Job -Name $jobName -ScriptBlock {
-        param( $appId, $appPort, $DAPR_HTTP_PORT, $DAPR_GRPC_PORT, $DAPR_PLACEMENT_PORT, $METRICS_PORT, $componentsPath, $configFile)
+        param( $appId, $appPort, $DAPR_HTTP_PORT, $DAPR_GRPC_PORT, $DAPR_PLACEMENT_PORT, $METRICS_PORT, $componentsPath, $configFile)    
 
 
         dapr run --app-id $appId  `
             --app-port $appPort `
-            --placement-host-address $("localhost:" + $DAPR_PLACEMENT_PORT) `
+            --placement-host-address "http://localhost:$DAPR_PLACEMENT_PORT" `
             --log-level debug `
             --components-path $componentsPath `
             --dapr-http-port $DAPR_HTTP_PORT `
@@ -164,10 +165,13 @@ foreach ($configProject in $configProjects) {
     } else {
         $jobName = $configProject.appId + "-app"
 
+        Write-Host "dotnet run --project $projectFile --launch-profile $($configProject.settingName)"
+
         Start-Job -Name $jobName -ScriptBlock {
             param($projectFile, $launchProfile)
 
-            dotnet run -p $projectFile --urls $env:ASPNETCORE_URLS --launch-profile $launchProfile # --property DOTNET_RUNNING_IN_DAPR_DEV=true
+            # dotnet run --project $projectFile --urls $env:ASPNETCORE_URLS --launch-profile $launchProfile # --property DOTNET_RUNNING_IN_DAPR_DEV=true
+            dotnet run --project $projectFile --launch-profile $launchProfile
 
         } -Argument $projectFile, $configProject.settingName
 
