@@ -1,19 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapr.Client;
+using Starships.ReadModel;
 
 namespace Starships.QueryApi.Controllers;
 
 [Route("starship")]
 public class StarshipQueryController : ControllerBase
 {
+    private readonly ILogger<StarshipQueryController> _logger;
+    private readonly DaprClient _daprClient;
+
+    public StarshipQueryController(ILogger<StarshipQueryController> logger, DaprClient daprClient)
+    {
+        _logger = logger;
+        _daprClient = daprClient;
+    }
+
     [HttpGet]
     [Route("list")]
     [SwaggerOperation(OperationId = "GetStarshipList")]
-    public ActionResult<IEnumerable<ReadModels.Starship>> GetStarshipList()
+    public async Task<ActionResult<IEnumerable<Starship>>> GetStarshipList()
     {
-        var items = Enumerable.Range(1, 99)
-            .Select(i => new ReadModels.Starship($"S{i}", DateTime.UtcNow.AddHours(i * -10)));
+        _logger.LogInformation(nameof(GetStarshipList));
 
-        var result = Ok(items);
-        return result;
+        var items = await _daprClient.InvokeMethodAsync<IEnumerable<Starship>>(
+            HttpMethod.Get,
+            "starships-query-service",
+            "starship/list",
+            HttpContext.RequestAborted);
+        return Ok(items);
     }
 }

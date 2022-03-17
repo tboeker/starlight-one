@@ -1,12 +1,24 @@
-var builder = WebApplication.CreateBuilder(args);
-var log = builder.AddMySerilog();
-builder.AddMyIngress(log);
+using Serilog;
 
+var log = SerilogExtensions.CreateBootstrapLogger();
+log("Starting up");
 
-var app = builder.Build();
-app.UseSerilogRequestLogging();
-app.UseMyIngress(log);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-app.UseMyInfoPage(c => c.ShowSwaggerLinks = false);
+    var app = builder
+        .ConfigureServices(log)
+        .ConfigurePipeline(log);
 
-app.Run();
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
+{
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
+}

@@ -72,7 +72,7 @@ public class InfoPageBuilder
 
                 if (app.Environment.IsDevelopment())
                 {
-                    options.AddLink("SwaggerUi", "/swagger", true);
+                    options.AddLink("SwaggerUi", "/swagger");
                 }
             }
 

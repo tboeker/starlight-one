@@ -11,20 +11,26 @@ public static class SwaggerExtensions
 {
     public const string SwaggerV1SwaggerJson = "/swagger/v1/swagger.json";
 
-    public static void AddMySwagger(this WebApplicationBuilder builder, Action<string> log,
+    public static WebApplicationBuilder AddMySwagger(this WebApplicationBuilder builder, Action<string> log,
         Action<SwaggerGenOptions>? configure = null)
     {
         log($"Adding SwaggerDoc: {builder.Environment.ApplicationName}");
 
-        builder.Services.AddEndpointsApiExplorer();
+        var services = builder.Services;
 
-        builder.Services.AddSingleton<IConfigureOptions<SwaggerGenOptions>>(p =>
+        services.AddEndpointsApiExplorer();
+
+        services.AddSingleton<IConfigureOptions<SwaggerGenOptions>>(p =>
             new ConfigureSwaggerGenOptions(builder, p.GetRequiredService<IOptions<IngressOptions>>(), log, configure)
         );
-        builder.Services.AddSwaggerGen();
+        
+        services.AddSwaggerGen();
+
+
+        return builder;
     }
 
-    public class ConfigureSwaggerGenOptions : IConfigureOptions<SwaggerGenOptions>
+    private class ConfigureSwaggerGenOptions : IConfigureOptions<SwaggerGenOptions>
     {
         private readonly WebApplicationBuilder _builder;
         private readonly Action<string> _log;
@@ -73,15 +79,10 @@ public static class SwaggerExtensions
             _log = log;
         }
 
-        // public void Apply(OpenApiOperation operation, OperationFilterContext context)
-        // {
-        //     _log(operation.OperationId);
-        //     
-        //     
-        // }
-
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
+            _log($"IngressPathFilter: Apply Path Updates for Doc {swaggerDoc.Info.Title}");
+
             var editedPaths = new OpenApiPaths();
             foreach (var (key, value) in swaggerDoc.Paths)
             {
@@ -93,7 +94,7 @@ public static class SwaggerExtensions
         }
     }
 
-    public static void UseMySwagger(this WebApplication app, Action<string> log)
+    public static WebApplication UseMySwagger(this WebApplication app, Action<string> log)
     {
         log("UseSwagger");
         app.UseSwagger();
@@ -141,5 +142,8 @@ public static class SwaggerExtensions
                     c.SwaggerEndpoint(url, name);
                 });
         }
+
+
+        return app;
     }
 }

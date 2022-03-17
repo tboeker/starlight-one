@@ -5,21 +5,25 @@ Content-Type: application/json
   "starshipId": "ship22",
   "timeStampUtc": "2022-03-15T22:08:10.424Z"
 }
-###
 
-POST http://localhost:5000/api/starships/command/starship/build
-Content-Type: application/json
 
-{
-  "starshipId": "ship22",
-  "timeStampUtc": "2022-03-15T22:08:10.424Z"
-}
-###
+####
 
-POST http://localhost:5000/starship/build
-Content-Type: application/json
+#POST http://localhost:5000/api/starships/command/starship/build
+#Content-Type: application/json
+#
+#{
+#  "starshipId": "ship22",
+#  "timeStampUtc": "2022-03-15T22:08:10.424Z"
+#}
 
-{
-  "starshipId": "ship22",
-  "timeStampUtc": "2022-03-15T22:08:10.424Z"
-}
+####
+
+#
+#POST http://localhost:5000/starship/build
+#Content-Type: application/json
+#
+#{
+#  "starshipId": "ship22",
+#  "timeStampUtc": "2022-03-15T22:08:10.424Z"
+#}

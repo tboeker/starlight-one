@@ -22,16 +22,22 @@ public class IngressOptions
 
 public static class IngressExtensions
 {
-    public static void AddMyIngress(this WebApplicationBuilder builder, Action<string> log)
+    public static WebApplicationBuilder AddMyIngress(this WebApplicationBuilder builder, Action<string> log)
     {
         log("Ingress: Adding Configuration");
         builder.Services.Configure<IngressOptions>(builder.Configuration.GetSection("Ingress"));
+
+        return builder;
     }
 
-
-    public static void UseMyIngress(this WebApplication app, Action<string> log)
+    public static WebApplication UseMyIngress(this WebApplication app, Action<string> log)
     {
-        var ingress = app.Services.GetRequiredService<IOptions<IngressOptions>>().Value;
+        var ingressOptions = app.Services.GetService<IOptions<IngressOptions>>();
+
+        if (ingressOptions == null)
+            return app;
+
+        var ingress = ingressOptions.Value;
 
         app.UseForwardedHeaders();
 
@@ -41,5 +47,7 @@ public static class IngressExtensions
             log($"Ingress: UsePathBase: {p}");
             app.UsePathBase(p);
         }
+
+        return app;
     }
 }

@@ -1,5 +1,5 @@
-using PublicApi;
 using Serilog;
+using Starships.QueryService;
 
 var log = SerilogExtensions.CreateBootstrapLogger();
 log("Starting up");

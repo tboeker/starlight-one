@@ -6,7 +6,7 @@ namespace StarlightOne;
 
 public static class WebApplicationExtensions
 {
-    public static void UseMyInfoPage(this WebApplication app, Action<InfoPageOptions>? setup = null)
+    public static WebApplication UseMyInfoPage(this WebApplication app, Action<InfoPageOptions>? setup = null)
     {
         var options = new InfoPageOptions();
         if (setup != null)
@@ -21,6 +21,8 @@ public static class WebApplicationExtensions
                 response.ContentType = "text/html";
                 await response.WriteAsync(ipb.GetContent());
             });
+
+        return app;
     }
 
 

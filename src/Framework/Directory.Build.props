@@ -3,6 +3,7 @@
 
     <PropertyGroup>
         <RootNamespace>StarlightOne</RootNamespace>
+        <IsFrameworkProject>true</IsFrameworkProject>
     </PropertyGroup>
 
 <!--    <ItemGroup>-->

@@ -1,38 +1,24 @@
-var builder = WebApplication.CreateBuilder(args);
+using Serilog;
 
-var log = builder.AddMySerilog();
-builder.AddMyIngress(log);
-builder.Services.Configure<MySwaggerOptions>(builder.Configuration.GetSection("Swagger"));
+var log = SerilogExtensions.CreateBootstrapLogger();
+log("Starting up");
 
-var app = builder.Build();
-app.UseMyIngress(log);
-app.UseSerilogRequestLogging();
-
-
-app.UseMyInfoPage(c =>
+try
 {
-    c.ShowSwaggerLinks = false;
-    c.AddLink("SwaggerUi", "/swagger", true);
-    c.AddLink("SwaggerDocs", "/swaggerdocs", true);
-});
+    var builder = WebApplication.CreateBuilder(args);
 
-var options = app.Services.GetRequiredService<IOptions<MySwaggerOptions>>().Value;
+    var app = builder
+        .ConfigureServices(log)
+        .ConfigurePipeline(log);
 
-app.UseSwaggerUI(c =>
+    app.Run();
+}
+catch (Exception ex)
 {
-    foreach (var doc in options.Docs)
-    {
-        log($"Adding Swagger Endpoint: {doc.Name} - {doc.Url}");
-        c.SwaggerEndpoint(doc.Url, doc.Name);
-    }
-});
-
-app.MapGet("/swaggerdocs",
-    async context =>
-    {
-        var response = context.Response;
-        response.ContentType = "application/json";
-        await response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(options.Docs));
-    });
-
-app.Run();
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
+{
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
+}

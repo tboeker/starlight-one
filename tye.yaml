@@ -71,6 +71,11 @@ services:
       - name: Ingress:PathBase
         value: /api/starships/query
         
+  - name: starships-query-service
+    project: src/Starships/src/Starships.QueryService/Starships.QueryService.csproj
+    bindings:
+      - protocol: http        
+        
   # run own dapr-placement service to keep all in one   
   - name: dapr-placement
     image : daprio/dapr:1.6.0

@@ -1,15 +1,25 @@
-var builder = WebApplication.CreateBuilder(args);
+using Serilog;
+using Starships.QueryApi;
 
-var log = builder.AddMySerilog();
-builder.AddMyIngress(log);
-builder.AddMySwagger(log);
-builder.Services.AddControllers();
+var log = SerilogExtensions.CreateBootstrapLogger();
+log("Starting up");
 
-var app = builder.Build();
-app.UseMyIngress(log);
-app.UseSerilogRequestLogging();
-app.UseMyInfoPage();
-app.UseMySwagger(log);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-app.MapControllers();
-app.Run();
+    var app = builder
+        .ConfigureServices(log)
+        .ConfigurePipeline(log);
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
+{
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
+}

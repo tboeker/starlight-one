@@ -17,6 +17,10 @@
         <Using Include="StarlightOne"/>
     </ItemGroup>
 
+    <ItemGroup Condition="'$(IsFrameworkProject)' != 'true'">
+        <ProjectReference Include="$(FrameworkRoot)\StarlightOne.Common\StarlightOne.Common.csproj" />
+    </ItemGroup>
+    
     <ItemGroup Condition="'$(IsTestProject)' != 'true'">
         <PackageReference Include="MinVer" Version="3.0.0" PrivateAssets="All"/>
         <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" PrivateAssets="All"/>
@@ -26,9 +30,10 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(IsHostProject)' == 'true'">
-        <Using Include="Serilog"/>
         <Using Include="Swashbuckle.AspNetCore.Annotations"/>
+        <Using Include="Microsoft.AspNetCore.Mvc"/>
         <Using Include="Microsoft.Extensions.Options"/>
+        <Using Include="Microsoft.Extensions.Logging"/>
         <ProjectReference Include="$(FrameworkRoot)\StarlightOne.Hosting\StarlightOne.Hosting.csproj" />
     </ItemGroup>
 

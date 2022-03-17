@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapr.Client;
 
 namespace Starships.CommandApi.Controllers;
 
@@ -7,13 +7,12 @@ namespace Starships.CommandApi.Controllers;
 public class StarshipCommandController : ControllerBase
 {
     private readonly ILogger<StarshipCommandController> _logger;
-    // ReSharper disable once NotAccessedField.Local
-    //private readonly DaprClient _daprClient;
+    private readonly DaprClient _daprClient;
 
-    public StarshipCommandController(ILogger<StarshipCommandController> logger)
+    public StarshipCommandController(ILogger<StarshipCommandController> logger, DaprClient daprClient)
     {
         _logger = logger;
-        // _daprClient = daprClient;
+        _daprClient = daprClient;
     }
 
     [SwaggerOperation(OperationId = "PostBuildStarship")]
