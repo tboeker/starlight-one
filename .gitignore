@@ -6,6 +6,7 @@
 .tye/
 .logs/
 *.deb
+temp*.*
 
 # User-specific files
 *.rsuser

@@ -61,7 +61,7 @@
 
     <PropertyGroup>
         <VSTestLogger>trx</VSTestLogger>
-<!--        <DOTNET_RUNNING_IN_DAPR_DEV>true</DOTNET_RUNNING_IN_DAPR_DEV>-->
+<!--        <DAPR_DEV>true</DAPR_DEV>-->
     </PropertyGroup>
 
     <PropertyGroup Label="Package versions for .NET 6" Condition="$(TargetFramework) == 'net6.0'">
@@ -73,9 +73,11 @@
         <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftTestHostVer)"/>
     </ItemGroup>
 
-<!--    <PropertyGroup Condition="'$(DOTNET_RUNNING_IN_DAPR_DEV)' == 'true'">-->
+
+   <PropertyGroup Condition="'$(DAPR_DEV)' == 'true'">
+      <BaseOutputPath>bin/dapr_dev</BaseOutputPath>
 <!--        <BaseIntermediateOutputPath>$(MSBuildProjectDirectory)/obj/daprdev/</BaseIntermediateOutputPath>-->
 <!--        <BaseOutputPath>$(MSBuildProjectDirectory)/bin/daprdev/</BaseOutputPath>-->
-<!--    </PropertyGroup>-->
+   </PropertyGroup>
 
 </Project>
