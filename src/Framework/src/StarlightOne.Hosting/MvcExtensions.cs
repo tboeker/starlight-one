@@ -10,6 +10,8 @@ public static class MvcExtensions
     {
         var services = builder.Services;
 
+        log("AddMyControllers");
+
         return services.AddControllers()
             .AddJsonOptions(options =>
             {

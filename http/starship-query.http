@@ -13,3 +13,15 @@ Accept: application/json
 
 GET http://localhost:5020/starship/list
 Accept: application/json
+
+###
+
+# Lokaler query-service ohne dapr
+GET http://localhost:5030/starship/list
+Accept: application/json
+
+###
+GET http://localhost:3500/v1.0/invoke/starships-query-service/method/starship/list2
+Accept: application/json
+
+###

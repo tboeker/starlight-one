@@ -30,6 +30,9 @@ docker-compose up
 dotnet tye run --watch
 
 docker-compose down --remove-orphans
+
+
+dotnet build --property:DAPR_DEV=true
 ```
 
 
@@ -107,6 +110,9 @@ dotnet tye run
 
 # cleanup docker images
 docker rm -f $(docker ps -aq)
+
+# kill dotnet process
+Get-Process -Name dotnet | kill
 ```
 
 ```

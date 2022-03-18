@@ -75,7 +75,20 @@
 
 
    <PropertyGroup Condition="'$(DAPR_DEV)' == 'true'">
-      <BaseOutputPath>bin/dapr_dev</BaseOutputPath>
+
+      <BaseOutputPath>bin/daprdev</BaseOutputPath>
+      <BaseIntermediateOutputPath>obj/daprdev</BaseIntermediateOutputPath>
+
+
+      <!-- <BaseOutputPath>bin/$(DAPR_DEV_INST)/$(Configuration)</BaseOutputPath>
+      <BaseIntermediateOutputPath>obj/$(DAPR_DEV_INST)/$(Configuration)</BaseIntermediateOutputPath> -->
+
+      <!-- <OutputPath>bin/$(DAPR_DEV_INST)/$(Configuration)</OutputPath> -->
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+      <MinVerSkip>true</MinVerSkip>
+      <!-- <BuildProjectReferences>false</BuildProjectReferences> -->
+
+      <!-- <BaseIntermediateOutputPath>obj/$(DAPR_DEV_INST)</BaseIntermediateOutputPath> -->
 <!--        <BaseIntermediateOutputPath>$(MSBuildProjectDirectory)/obj/daprdev/</BaseIntermediateOutputPath>-->
 <!--        <BaseOutputPath>$(MSBuildProjectDirectory)/bin/daprdev/</BaseOutputPath>-->
    </PropertyGroup>

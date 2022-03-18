@@ -10,6 +10,9 @@ public static class DaprExtensions
     {
         var services = builder.Services;
 
+        log("AddMyDaprClient");
+
+
         services.AddDaprClient(clientBuilder =>
             clientBuilder.UseJsonSerializationOptions(new JsonSerializerOptions()
             {
@@ -22,7 +25,9 @@ public static class DaprExtensions
 
     public static IMvcBuilder AddMyDapr(this IMvcBuilder builder, Action<string> log)
     {
-        builder.AddDapr(clientBuilder => clientBuilder
+        log("AddMyDapr");
+
+        builder.AddDapr(clientBuilder => clientBuilder        
             .UseJsonSerializationOptions(new JsonSerializerOptions()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

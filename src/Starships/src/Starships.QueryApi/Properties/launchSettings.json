@@ -7,7 +7,7 @@
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5020;https://localhost:5021",
+        "ASPNETCORE_URLS": "http://localhost:5020",
         "DAPR_HTTP_PORT": "3520",
         "DAPR_GRPC_PORT": "50021"
       }

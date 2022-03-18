@@ -20,6 +20,7 @@ Param(
   [switch] $skipRun
   , [switch] $dryRun
   , [string] $skipAppId
+  , [switch] $skipBuild
 
 )
 
@@ -81,13 +82,32 @@ foreach ($configProject in $configProjects) {
 }
 
 # stop and remove previous jobs
-Write-Host "Removing previous Jobs"
 $jobNamePattern = $configProjects | Join-String -Property appId -Separator "|" -OutputPrefix "(placement|" -OutputSuffix ")"
 # Get-Job | Write-Host $_.Name
-Get-Job | ? { $_.Name -match $jobNamePattern } | Stop-Job -PassThru | Remove-Job | Out-Host
+
+if ($dryRun) {
+
+}
+else {
+  Write-Host "Removing previous Jobs" 
+  Get-Job | ? { $_.Name -match $jobNamePattern } | Stop-Job -PassThru | Remove-Job | Out-Host
+}
 
 if ($skipRun) {
   return
+}
+
+if ($skipBuild) {
+
+}
+else {
+  if ($dryRun) {
+
+  }
+  else {
+    Write-Host "Running dotnet build" 
+    dotnet build --verbosity quiet --nologo    
+  }
 }
 
 # --------------------------------------------------------------------------------
@@ -121,19 +141,19 @@ foreach ($configProject in $configProjects) {
   # $configFile = Join-Path $configProject.folder "tracing.yaml" -Resolve
   $componentsPath = Join-Path "./" "components/" -Resolve
 
-  # $ASPNETCORE_URLS = "http://localhost:" + $APP_PORT + ";https://localhost:" + $($APP_PORT + 1)
+  $ASPNETCORE_URLS = "http://localhost:" + $APP_PORT # + ";https://localhost:" + $($APP_PORT + 1)
 
   $launchSettings = Get-Content $launchSettingsFile | ConvertFrom-Json
 
   "-" * 80
 
-  # foreach ($profile in $launchSettings.profiles.PSObject.Properties) {
-  #     if ($profile.Name -eq $configProject.settingName) {
-  #         Update-EnvironmentVariable $profile.Value.environmentVariables "ASPNETCORE_URLS" $ASPNETCORE_URLS
-  #         Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_HTTP_PORT" $DAPR_HTTP_PORT.ToString()
-  #         Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_GRPC_PORT" $DAPR_GRPC_PORT.ToString()
-  #     }
-  # }
+  foreach ($profile in $launchSettings.profiles.PSObject.Properties) {
+      if ($profile.Name -eq $configProject.settingName) {
+          Update-EnvironmentVariable $profile.Value.environmentVariables "ASPNETCORE_URLS" $ASPNETCORE_URLS
+          Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_HTTP_PORT" $DAPR_HTTP_PORT.ToString()
+          Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_GRPC_PORT" $DAPR_GRPC_PORT.ToString()
+      }
+  }
 
   $launchSettings | ConvertTo-Json -Depth 10 | Set-Content $launchSettingsFile
   Write-Host "Updated" $launchSettingsFile
@@ -143,7 +163,10 @@ foreach ($configProject in $configProjects) {
   Write-Host "Start Daprd in background" $configProject.appId $APP_PORT $env:DAPR_HTTP_PORT $env:DAPR_GRPC_PORT $env:METRICS_PORT
   $cmd = "dapr run --app-id $($configProject.appId) --app-port $APP_PORT --placement-host-address localhost:$DAPR_PLACEMENT_PORT --log-level debug --components-path $componentsPath --dapr-http-port $DAPR_HTTP_PORT --dapr-grpc-port $DAPR_GRPC_PORT --metrics-port $METRICS_PORT"
   Write-Host "  $cmd"
-  $cmds += $cmd
+  $cmds += @{ 
+    cmd     = $cmd
+    jobName = $jobName
+  }
 
 
   if ($dryRun) {
@@ -177,9 +200,12 @@ foreach ($configProject in $configProjects) {
   else {
     $jobName = $configProject.appId + "-app"
 
-    $cmd = "dotnet run --project $projectFile --launch-profile $($configProject.settingName) --property:DAPR_DEV=true"
+    $cmd = "dotnet run --project $projectFile --launch-profile $($configProject.settingName) --no-build" # --property:DAPR_DEV=true --property:DAPR_DEV_INST=X$APP_PORT"
     Write-Host "  $cmd"
-    $cmds += $cmd    
+    $cmds += @{ 
+      cmd     = $cmd
+      jobName = $jobName
+    }  
 
     # $workingFolder = Join-Path './' $configProject.folder -Resolve
     # Write-Host "   -WorkingDirectory: $workingFolder"
@@ -190,19 +216,20 @@ foreach ($configProject in $configProjects) {
     else {
       Write-Host "Start Job: $jobName"
       Start-Job -Name $jobName -ScriptBlock {
-        param($projectFile, $launchProfile)
+        param($projectFile, $launchProfile, $id)
 
         # dotnet run --project $projectFile --urls $env:ASPNETCORE_URLS --launch-profile $launchProfile # --property DAPR_DEV=true
-        dotnet run --project $projectFile --launch-profile $launchProfile --property:DAPR_DEV=true
+        # dotnet run --project $projectFile --launch-profile $launchProfile --property:DAPR_DEV=true --property:DAPR_DEV_INST=X$id
+        dotnet run --project $projectFile --launch-profile $launchProfile --no-build
 
-      } -Argument $projectFile, $configProject.settingName
+      } -Argument $projectFile, $configProject.settingName, $APP_PORT
 
     }
     $jobs += $jobName
   }
 
-  # $DAPR_HTTP_PORT += 10
-  # $DAPR_GRPC_PORT += 10
+  $DAPR_HTTP_PORT += 10
+  $DAPR_GRPC_PORT += 10
   $APP_PORT += 10
   $METRICS_PORT += 1
 }
@@ -210,21 +237,47 @@ foreach ($configProject in $configProjects) {
 # --------------------------------------------------------------------------------
 # show commands
 
-$fileOuts = @()
-"-" * 80
-foreach ($cmd in $cmds) {
-  Write-Host $cmd
-  $fileOuts += 'start ' + $cmd
+$cmdDir = './.dapr-run'
+if (! (Test-Path -Path $cmdDir)) {
+  New-Item -Path $cmdDir -ItemType Directory
 }
-$fileOuts | Set-Content './temp-run-dapr1.cmd'
+$cmdFolder = Join-Path . $cmdDir -Resolve
 
+$sumOuts = @()
 "-" * 80
-$fileOuts = @()
-foreach ($cmd in $cmds) {
-  $fileOuts += $cmd
-  # Write-Host $cmd1  
+foreach ($c in $cmds) {
+ 
+  $jobName = $c.jobName
+  $fileName = $jobName + '.cmd'
+
+  $file = Join-Path $cmdFolder $fileName
+  Write-Host $file
+  
+  $fileOuts = @()
+  $fileOuts += 'title ' + $jobName
+  # $fileOuts += 'start ' + $c.cmd
+  $fileOuts += $c.cmd
+  $fileOuts | Set-Content $file
+
+  $sumOuts += 'start ' + $fileName
 }
-$fileOuts | Set-Content './temp-run-dapr2.txt'
+
+$sumOuts | Set-Content (Join-Path $cmdFolder 'run-all.cmd')
+
+@(
+  'title dapr dashboard',
+  'dapr dashboard'
+) | Set-Content (Join-Path $cmdFolder 'dashboard.cmd')
+
+
+
+# "-" * 80
+# $fileOuts = @()
+# foreach ($cmd in $cmds) {
+#   $fileOuts += $cmd
+#   # Write-Host $cmd1  
+# }
+# $fileOuts | Set-Content './temp-run-dapr2.txt'
 
 # --------------------------------------------------------------------------------
 # handle menu

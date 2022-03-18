@@ -29,8 +29,14 @@ internal static class HostingExtensions
         app.MapQueryServices();
 
         app.UseRouting();
+        app.UseCloudEvents();
 
-        app.MapControllers();
+     
+         app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapSubscribeHandler();
+                endpoints.MapControllers();
+            });
 
 
         return app;
