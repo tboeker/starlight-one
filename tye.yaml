@@ -51,7 +51,7 @@ services:
       - protocol: http
     
   - name: starships-command-api
-    project: src/Starships/src/Starships.CommandApi/Starships.CommandApi.csproj
+    project: src/Starships/src/Starships.Command.Api/Starships.Command.Api.csproj
     bindings:
       - protocol: http
     env:
@@ -59,12 +59,12 @@ services:
       value: /api/starships/command
 
   - name: starships-command-service
-    project: src/Starships/src/Starships.CommandService/Starships.CommandService.csproj
+    project: src/Starships/src/Starships.Command.Service/Starships.Command.Service.csproj
     bindings:
       - protocol: http
 
   - name: starships-query-api
-    project: src/Starships/src/Starships.QueryApi/Starships.QueryApi.csproj
+    project: src/Starships/src/Starships.Query.Api/Starships.Query.Api.csproj
     bindings:
       - protocol: http
     env:
@@ -72,7 +72,7 @@ services:
         value: /api/starships/query
         
   - name: starships-query-service
-    project: src/Starships/src/Starships.QueryService/Starships.QueryService.csproj
+    project: src/Starships/src/Starships.Query.Service/Starships.Query.Service.csproj
     bindings:
       - protocol: http        
         

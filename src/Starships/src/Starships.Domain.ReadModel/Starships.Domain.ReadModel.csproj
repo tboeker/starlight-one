@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <RootNamespace>Starships.ReadModel</RootNamespace>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Using Include="System.Text.Json.Serialization" />
+    </ItemGroup>
+
+</Project>

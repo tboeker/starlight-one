@@ -29,30 +29,30 @@ $host.ui.RawUI.WindowTitle = 'starlight-one-dapr'
 $configProjects = @(
   @{
     appId       = "starships-command-api"
-    folder      = "./src/Starships/src/Starships.CommandApi"
-    projectFile = "Starships.CommandApi.csproj"
-    settingName = "Starships.CommandApi"
+    folder      = "./src/Starships/src/Starships.Command.Api"
+    projectFile = "Starships.Command.Api.csproj"
+    settingName = "Starships.Command.Api"
     debug       = $false
   },
   @{
     appId       = "starships-command-service"
-    folder      = "./src/Starships/src/Starships.CommandService"
-    projectFile = "Starships.CommandService.csproj"
-    settingName = "Starships.CommandService"
+    folder      = "./src/Starships/src/Starships.Command.Service"
+    projectFile = "Starships.Command.Service.csproj"
+    settingName = "Starships.Command.Service"
     debug       = $false
   },
   @{
     appId       = "starships-query-api"
-    folder      = "./src/Starships/src/Starships.QueryApi"
-    projectFile = "Starships.QueryApi.csproj"
-    settingName = "Starships.QueryApi"
+    folder      = "./src/Starships/src/Starships.Query.Api"
+    projectFile = "Starships.Query.Api.csproj"
+    settingName = "Starships.Query.Api"
     debug       = $false
   },
   @{
     appId       = "starships-query-service"
-    folder      = "./src/Starships/src/Starships.QueryService"
-    projectFile = "Starships.QueryService.csproj"
-    settingName = "Starships.QueryService"
+    folder      = "./src/Starships/src/Starships.Query.Service"
+    projectFile = "Starships.Query.Service.csproj"
+    settingName = "Starships.Query.Service"
     debug       = $false
   }
 )

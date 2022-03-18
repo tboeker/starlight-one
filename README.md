@@ -116,11 +116,11 @@ Get-Process -Name dotnet | kill
 ```
 
 ```
-dotnet new so-public-api --name Starships.CommandApi --output ./src/Starships/src/Starships.CommandApi
-dotnet sln .\starlight-one.sln add ./src/Starships/src/Starships.CommandApi
+dotnet new so-public-api --name Starships.Command.Api --output ./src/Starships/src/Starships.Command.Api
+dotnet sln .\starlight-one.sln add ./src/Starships/src/Starships.Command.Api
 
-dotnet new so-public-api --name Starships.CommandService --output ./src/Starships/src/Starships.CommandService
-dotnet sln .\starlight-one.sln add ./src/Starships/src/Starships.CommandService
+dotnet new so-public-api --name Starships.Command.Service --output ./src/Starships/src/Starships.Command.Service
+dotnet sln .\starlight-one.sln add ./src/Starships/src/Starships.Command.Service
 ```
 
 ```

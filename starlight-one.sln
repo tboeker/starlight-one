@@ -37,19 +37,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Starships", "Starships", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{639B493C-EFB3-4FC9-BD39-BD9A2454AA09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.CommandApi", "src\Starships\src\Starships.CommandApi\Starships.CommandApi.csproj", "{4C17526F-05A0-426D-9287-7763696615BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.Command.Api", "src\Starships\src\Starships.Command.Api\Starships.Command.Api.csproj", "{4C17526F-05A0-426D-9287-7763696615BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.CommandService", "src\Starships\src\Starships.CommandService\Starships.CommandService.csproj", "{DF4DD384-6A07-4932-A547-7C44E487C869}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.Command.Service", "src\Starships\src\Starships.Command.Service\Starships.Command.Service.csproj", "{DF4DD384-6A07-4932-A547-7C44E487C869}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{3FB20A2A-9D15-46B0-9DE8-E1CBE68BF4C3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarlightOne.Tests.Hosting", "src\Framework\test\StarlightOne.Tests.Hosting\StarlightOne.Tests.Hosting.csproj", "{07EDEB31-AAA1-4DAD-AF7C-D010F4008B1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.QueryApi", "src\Starships\src\Starships.QueryApi\Starships.QueryApi.csproj", "{1D6CE6CE-98C9-4341-8139-655038D01F18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.Query.Api", "src\Starships\src\Starships.Query.Api\Starships.Query.Api.csproj", "{1D6CE6CE-98C9-4341-8139-655038D01F18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.QueryService", "src\Starships\src\Starships.QueryService\Starships.QueryService.csproj", "{706E4585-35C9-42E5-874A-F0C1218C0A5D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.Query.Service", "src\Starships\src\Starships.Query.Service\Starships.Query.Service.csproj", "{706E4585-35C9-42E5-874A-F0C1218C0A5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.ReadModel", "src\Starships\src\Starships.ReadModel\Starships.ReadModel.csproj", "{DBEF454D-1D7B-4ADA-8629-5BDB6BA7DE4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starships.Domain.ReadModel", "src\Starships\src\Starships.Domain.ReadModel\Starships.Domain.ReadModel.csproj", "{DBEF454D-1D7B-4ADA-8629-5BDB6BA7DE4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

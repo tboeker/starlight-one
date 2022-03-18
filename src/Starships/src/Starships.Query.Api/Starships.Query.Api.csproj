@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <IsHostProject>true</IsHostProject>
+        <RootNamespace>Starships.Query.Api</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Starships.Domain.ReadModel\Starships.Domain.ReadModel.csproj" />
+    </ItemGroup>
+    
+</Project>
