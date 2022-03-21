@@ -136,7 +136,6 @@ $APP_PORT = 5000
 foreach ($configProject in $configProjects) {
   $projectFile = Join-Path $configProject.folder $configProject.projectFile -Resolve
   $launchSettingsFile = Join-Path $configProject.folder "Properties/launchSettings.json" -Resolve
-  # $componentsPath = Join-Path $configProject.folder "components/" -Resolve
   $configFile = Join-Path './dapr' 'config.yaml' -Resolve
   $componentsPath = Join-Path './dapr' 'components/' -Resolve
 
@@ -198,7 +197,7 @@ foreach ($configProject in $configProjects) {
   else {
     $jobName = $configProject.appId + "-app"
 
-    $cmd = "dotnet run --project $projectFile --launch-profile $($configProject.settingName) --no-build" # --property:DAPR_DEV=true --property:DAPR_DEV_INST=X$APP_PORT"
+    $cmd = "dotnet run --project $projectFile --launch-profile $($configProject.settingName) --no-build"
     Write-Host "  $cmd"
     $cmds += @{ 
       cmd     = $cmd
