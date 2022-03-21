@@ -11,14 +11,19 @@ public static class DaprExtensions
         var services = builder.Services;
 
         log("AddMyDaprClient");
+        services.AddDaprClient();
 
-
-        services.AddDaprClient(clientBuilder =>
-            clientBuilder.UseJsonSerializationOptions(new JsonSerializerOptions()
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                PropertyNameCaseInsensitive = true,
-            }));
+        // services.AddDaprClient(clientBuilder =>
+        //     {
+        //         //      clientBuilder.UseGrpcEndpoint()
+        //
+        //         // clientBuilder.UseJsonSerializationOptions(new JsonSerializerOptions()
+        //         // {
+        //         //     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //         //     PropertyNameCaseInsensitive = true,
+        //         // })
+        //     }
+        // );
 
         return builder;
     }
@@ -27,12 +32,15 @@ public static class DaprExtensions
     {
         log("AddMyDapr");
 
-        builder.AddDapr(clientBuilder => clientBuilder        
-            .UseJsonSerializationOptions(new JsonSerializerOptions()
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                PropertyNameCaseInsensitive = true,
-            }));
+        builder.AddDapr();
+        //
+        // builder.AddDapr(clientBuilder => clientBuilder
+        //         
+        //     .UseJsonSerializationOptions(new JsonSerializerOptions()
+        //     {
+        //         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //         PropertyNameCaseInsensitive = true,
+        //     }));
 
         return builder;
     }

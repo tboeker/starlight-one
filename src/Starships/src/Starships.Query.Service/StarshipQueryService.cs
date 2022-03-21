@@ -3,12 +3,12 @@ using Starships.ReadModel;
 
 namespace Starships.Query.Service;
 
-public class StarshipQuery.Service
+public class StarshipQueryService
 {
     private readonly DaprClient _daprClient;
     private readonly ILogger _logger;
 
-    public StarshipQuery.Service(ILoggerFactory loggerFactory , DaprClient daprClient)
+    public StarshipQueryService(ILoggerFactory loggerFactory , DaprClient daprClient)
     {
         _daprClient = daprClient;
         _logger = loggerFactory.CreateLogger(GetType());

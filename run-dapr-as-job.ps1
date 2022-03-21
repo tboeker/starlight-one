@@ -76,9 +76,8 @@ $ErrorActionPreference = "Stop"
 foreach ($configProject in $configProjects) {
   $projectFile = Join-Path $configProject.folder $configProject.projectFile -Resolve
   $launchSettingsFile = Join-Path $configProject.folder "Properties/launchSettings.json" -Resolve
-  $componentsPath = Join-Path . "components/" -Resolve
-  # $componentsPath = Join-Path $configProject.folder "components/" -Resolve
-  # $configFile = Join-Path $configProject.folder "tracing.yaml" -Resolve
+  $componentsPath = Join-Path './dapr' 'components/' -Resolve
+  $configFile = Join-Path './dapr' 'config.yaml' -Resolve
 }
 
 # stop and remove previous jobs
@@ -138,8 +137,8 @@ foreach ($configProject in $configProjects) {
   $projectFile = Join-Path $configProject.folder $configProject.projectFile -Resolve
   $launchSettingsFile = Join-Path $configProject.folder "Properties/launchSettings.json" -Resolve
   # $componentsPath = Join-Path $configProject.folder "components/" -Resolve
-  # $configFile = Join-Path $configProject.folder "tracing.yaml" -Resolve
-  $componentsPath = Join-Path "./" "components/" -Resolve
+  $configFile = Join-Path './dapr' 'config.yaml' -Resolve
+  $componentsPath = Join-Path './dapr' 'components/' -Resolve
 
   $ASPNETCORE_URLS = "http://localhost:" + $APP_PORT # + ";https://localhost:" + $($APP_PORT + 1)
 
@@ -161,7 +160,7 @@ foreach ($configProject in $configProjects) {
   $jobName = $configProject.appId + "-daprd"
 
   Write-Host "Start Daprd in background" $configProject.appId $APP_PORT $env:DAPR_HTTP_PORT $env:DAPR_GRPC_PORT $env:METRICS_PORT
-  $cmd = "dapr run --app-id $($configProject.appId) --app-port $APP_PORT --placement-host-address localhost:$DAPR_PLACEMENT_PORT --log-level debug --components-path $componentsPath --dapr-http-port $DAPR_HTTP_PORT --dapr-grpc-port $DAPR_GRPC_PORT --metrics-port $METRICS_PORT"
+  $cmd = "dapr run --app-id $($configProject.appId) --app-port $APP_PORT --placement-host-address localhost:$DAPR_PLACEMENT_PORT --log-level debug --components-path $componentsPath --dapr-http-port $DAPR_HTTP_PORT --dapr-grpc-port $DAPR_GRPC_PORT --metrics-port $METRICS_PORT --config $configFile"
   Write-Host "  $cmd"
   $cmds += @{ 
     cmd     = $cmd
@@ -184,9 +183,8 @@ foreach ($configProject in $configProjects) {
         --components-path $componentsPath `
         --dapr-http-port $DAPR_HTTP_PORT `
         --dapr-grpc-port $DAPR_GRPC_PORT `
-        --metrics-port $METRICS_PORT
-
-      # --config $configFile `
+        --metrics-port $METRICS_PORT `
+        --config $configFile
 
     } -Argument $configProject.appId, $APP_PORT, $DAPR_HTTP_PORT, $DAPR_GRPC_PORT, $DAPR_PLACEMENT_PORT, $METRICS_PORT, $componentsPath, $configFile
 

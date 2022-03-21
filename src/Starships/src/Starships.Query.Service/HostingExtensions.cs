@@ -14,7 +14,7 @@ internal static class HostingExtensions
             .AddMyDapr(log)
             ;
 
-        builder.Services.AddSingleton<StarshipQuery.Service>();
+        builder.Services.AddSingleton<StarshipQueryService>();
 
         return builder.Build();
     }
@@ -26,13 +26,12 @@ internal static class HostingExtensions
         app.UseMyInfoPage()
             .UseMySwagger(log);
 
-        app.MapQuery.Services();
+        app.MapQueryServices();
 
         app.UseRouting();
         app.UseCloudEvents();
 
-     
-         app.UseEndpoints(endpoints =>
+        app.UseEndpoints(endpoints =>
             {
                 endpoints.MapSubscribeHandler();
                 endpoints.MapControllers();
@@ -42,15 +41,15 @@ internal static class HostingExtensions
         return app;
     }
 
-    private static void MapQuery.Services(this IEndpointRouteBuilder app)
+    private static void MapQueryServices(this IEndpointRouteBuilder app)
     {
         app.MapGet("starship/list",
-            (CancellationToken cancellationToken, StarshipQuery.Service service) =>
+            (CancellationToken cancellationToken, StarshipQueryService service) =>
                 service.GetListAsync(cancellationToken)
         ); 
         
         app.MapGet("starship/list2",
-            (CancellationToken cancellationToken, StarshipQuery.Service service) =>
+            (CancellationToken cancellationToken, StarshipQueryService service) =>
                 service.GetList2Async(cancellationToken)
         );
         
