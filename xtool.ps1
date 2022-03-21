@@ -9,7 +9,7 @@ Param(
   , [switch] $composeDown
   , [switch] $clean
   , [switch] $updatelaunchSettings
-  , [switch] $writeDaprFiles
+  , [switch] $writeDaprScripts
   # , [switch] $dryRun
   # , [string] $skz
   # , [switch] $skipBuild
@@ -19,13 +19,14 @@ Param(
 # --------------------------------------------------------------------------------
 function resetError() { $global:LASTEXITCODE = 0 }
 function checkError() { if (-not $continueOnError) { if ($LASTEXITCODE -ne 0) { throw 'error' } } }
+
 # --------------------------------------------------------------------------------
 function runX() {
-  [Cmdletbinding()] param([string] $cmd, [array] $args) 
+  [Cmdletbinding()] param([string] $cmd, [array] $argsarr) 
   resetError
-  if ($args) {
-    Write-Host '  Run with args:' $cmd $args
-    & $cmd $args
+  if ($argsarr) {
+    Write-Host '  Run with args:' $cmd $argsarr
+    & $cmd $argsarr
   }
   else {
     Write-Host '  Run:' $cmd
@@ -43,17 +44,22 @@ function Update-EnvironmentVariable ($environmentVariables, $name, $value) {
   }
   $environmentVariables | Add-Member -MemberType NoteProperty -Name $name -Value $value
 }
+
 # --------------------------------------------------------------------------------
 $DebugPreference
 
 $host.ui.RawUI.WindowTitle = 'starlight-one-xtool'
 $solutionFile = 'starlight-one.sln'
+$solutionFilePath = Join-Path '.' $solutionFile -Resolve
 $projects = @()
-$DAPR_PLACEMENT_PORT = 50006
-$configFile = Join-Path './dapr' 'config.yaml' -Resolve
+$daprPlacementPort = 50006
+$configFilePath = Join-Path './dapr' 'config.yaml' -Resolve
 $componentsPath = Join-Path './dapr' 'components/' -Resolve
+$daprScriptsPath = Join-Path '.' '.dapr-run'
 
+# --------------------------------------------------------------------------------
 if ($true) {
+  resetError
   "-" * 80
   $daprHttpPort = 3500
   $daprGrpcPort = 50001
@@ -66,7 +72,7 @@ if ($true) {
 
   foreach ($file in $files) {    
     $projDir = $file.Directory.Parent
-    Write-Debug "  Project Dir: $($projDir.FullName)"
+    if ($dbg) { Write-Debug "  Project Dir: $($projDir.FullName)" }
     $projectName = $projDir.Name
     $projFileName = "$($projectName).csproj"
     $projFile = Join-Path $projDir.FullName $projFileName -Resolve   
@@ -91,8 +97,8 @@ if ($true) {
     $appPort += 10
     $metricsPort += 1
 
-    $jobName = $proj.appId + "-daprd"
-    $cmd = "dapr run --app-id $($proj.appId) --app-port $($proj.appPort) --placement-host-address localhost:$DAPR_PLACEMENT_PORT --log-level debug --components-path $componentsPath --dapr-http-port $($proj.daprHttpPort) --dapr-grpc-port $($proj.DAPR_GRPC_PORT) --metrics-port $metricsPort --config $configFile"
+    $jobName = $proj.appId + "-dapr"
+    $cmd = "dapr run --app-id $($proj.appId) --app-port $($proj.appPort) --placement-host-address localhost:$daprPlacementPort --log-level debug --components-path $componentsPath --dapr-http-port $($proj.daprHttpPort) --dapr-grpc-port $($proj.DAPR_GRPC_PORT) --metrics-port $metricsPort --config $configFilePath"
 
     $proj.jobs += @{
       cmd     = $cmd
@@ -103,7 +109,7 @@ if ($true) {
       Write-Host "expecting" $($proj.projectFile) "to be started from development environment"
     }
     else {
-      $jobName = $configProject.appId + "-app"
+      $jobName = $proj.appId + "-app"
       $cmd = "dotnet run --project $($proj.projectFile) --launch-profile $($proj.settingName) --no-build"
       $proj.jobs += @{
         cmd     = $cmd
@@ -114,9 +120,11 @@ if ($true) {
     $projects += $proj
   }
 
+  checkError
   Write-Host "$($projects.Count) Projects found"
 }
 
+# --------------------------------------------------------------------------------
 if ($dbg) {
   "-" * 80
   foreach ($proj in $projects) {  
@@ -124,10 +132,11 @@ if ($dbg) {
   }
 }
 
-
+# --------------------------------------------------------------------------------
 if ($updatelaunchSettings) {
   "-" * 80
   Write-Host 'Updating Launch Settings'
+  resetError
 
   foreach ($proj in $projects) {
     $launchSettingsFile = $proj.launchSettingsFile
@@ -151,55 +160,71 @@ if ($updatelaunchSettings) {
       Write-Host "  Updated" $launchSettingsFile
     }
   }
+  checkError
 }
 
-if ($writeDaprFiles) {
+# --------------------------------------------------------------------------------
+if ($writeDaprScripts) {
   "-" * 80
   Write-Host 'Writing dapr files'
-
-  $cmdDir = './.dapr-run'
-  if (! (Test-Path -Path $cmdDir)) {
-    New-Item -Path $cmdDir -ItemType Directory
+  if ($dbg) {
+    Write-Host "  daprScriptsDir: $($daprScriptsPath)"  
   }
-  $cmdFolder = Join-Path . $cmdDir -Resolve
-
+  if (! (Test-Path -Path $daprScriptsPath)) {
+    New-Item -Path $daprScriptsPath -ItemType Directory
+  }
+ 
   $sumOuts = @()
 
   "-" * 80
+
+  $sumOuts += "dotnet build $($solutionFilePath)"
+
   foreach ($proj in $projects) {  
-    $proj | ConvertTo-Json | Out-Host
+    if ($dbg) {
+      Write-Host "  $($proj.name)"  
+    }
   
     foreach ($j in $proj.jobs) {
       
       $cmd = $j.cmd
       $jobName = $j.jobName
-      
-      $fileName = $jobName + '.cmd'
 
-      $file = Join-Path $cmdFolder $fileName
-      Write-Host $file
-  
+      if ($dbg) {
+        Write-Host "   $jobName"  
+      }
+        
+      $fileName = $jobName + '.cmd'
+      if ($dbg) {
+        Write-Host "    fileName: $fileName"  
+      }
+
+      $filePath = Join-Path -Path $daprScriptsPath -ChildPath $fileName
+      if ($dbg) {
+        Write-Host "    Scriptpath: $($filePath)"  
+      }
+   
       $fileOuts = @()
       $fileOuts += 'title ' + $jobName
-      # $fileOuts += 'start ' + $c.cmd
-      $fileOuts += $c.cmd
-      $fileOuts | Set-Content $file
+      $fileOuts += 'start ' + $cmd
+      # $fileOuts += $cmd
+      $fileOuts | Set-Content $filePath
 
       $sumOuts += 'start ' + $fileName
     }
   }
   
-  $sumOuts | Set-Content (Join-Path $cmdFolder 'run-all.cmd')
+    $sumOuts | Set-Content (Join-Path $daprScriptsPath 'run-all.cmd')
 
   @(
     'title dapr dashboard',
     'dapr dashboard'
-  ) | Set-Content (Join-Path $cmdFolder 'dashboard.cmd')
+  ) | Set-Content (Join-Path $daprScriptsPath 'dashboard.cmd')
 
 
 }
 
-
+# --------------------------------------------------------------------------------
 if ($clean) {
   "-" * 80
   Write-Host 'Starting clean'
@@ -210,6 +235,7 @@ if ($clean) {
   }
 }
 
+# --------------------------------------------------------------------------------
 if ($daprInit) {
   "-" * 80
   Write-Host 'Starting dapr init slim'
@@ -221,30 +247,34 @@ if ($daprInit) {
   checkError
 }
 
+# --------------------------------------------------------------------------------
 if ($build) {
   "-" * 80
   Write-Host 'Starting build'
-  runX -cmd 'dotnet' -args @('restore')
-  runX -cmd 'dotnet' -args @('build', $solutionFile  )
+  runX -cmd 'dotnet' -argsarr @('restore')
+  runX -cmd 'dotnet' -argsarr @('build', $solutionFile  )
 }
 
+# --------------------------------------------------------------------------------
 if ($tyeRun) {
   "-" * 80
   Write-Host 'Starting tye run'
-  runX -cmd 'dotnet' -args @('restore')
+  runX -cmd 'dotnet' -argsarr @('restore')
 
   $ar = @('tye', 'run', '--watch') #, '--logs seq')
-  runX -cmd 'dotnet' -args $ar
+  runX -cmd 'dotnet' -argsarr $ar
 }
 
+# --------------------------------------------------------------------------------
 if ($composeUp) {
   "-" * 80
   Write-Host 'Docker Compose Up' 
-  runX -cmd 'docker' -args @('compose', 'up', '--detach')
+  runX -cmd 'docker' -argsarr @('compose', 'up', '--detach')
 }
 
+# --------------------------------------------------------------------------------
 if ($composeDown) {
   "-" * 80
   Write-Host 'Docker Compose Down'
-  runX -cmd 'docker' -args @('compose', 'down', '--remove-orphans')
+  runX -cmd 'docker' -argsarr @('compose', 'down', '--remove-orphans')
 }
