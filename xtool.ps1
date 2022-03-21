@@ -10,6 +10,9 @@ Param(
   , [switch] $clean
   , [switch] $updatelaunchSettings
   , [switch] $writeDaprScripts
+  , [switch] $startJobs
+  , [switch] $stopJobs
+  , [switch] $showJobs
   # , [switch] $dryRun
   # , [string] $skz
   # , [switch] $skipBuild
@@ -65,7 +68,6 @@ if ($true) {
   $daprGrpcPort = 50001
   $metricsPort = 9091
   $appPort = 5000
-
   Write-Host 'Loadings Projects'
   $files = Get-ChildItem -Path './src' -Filter 'launchSettings.json' -Recurse -Depth 99;
   $file = $files[0]
@@ -89,20 +91,22 @@ if ($true) {
       appPort            = $appPort.ToString()
       daprHttpPort       = $daprHttpPort.ToString()
       daprGrpcPort       = $daprGrpcPort.ToString()
+      metricsPort        = $metricsPort.ToString()
       jobs               = @()
     }
     
     $daprHttpPort += 10
-    $DAPR_GRPC_PORT += 10
+    $daprGrpcPort += 10
     $appPort += 10
     $metricsPort += 1
 
     $jobName = $proj.appId + "-dapr"
-    $cmd = "dapr run --app-id $($proj.appId) --app-port $($proj.appPort) --placement-host-address localhost:$daprPlacementPort --log-level debug --components-path $componentsPath --dapr-http-port $($proj.daprHttpPort) --dapr-grpc-port $($proj.DAPR_GRPC_PORT) --metrics-port $metricsPort --config $configFilePath"
+    $cmd = "dapr run --app-id $($proj.appId) --app-port $($proj.appPort) --placement-host-address localhost:$daprPlacementPort --log-level debug --components-path $componentsPath --dapr-http-port $($proj.daprHttpPort) --dapr-grpc-port $($proj.daprGrpcPort) --metrics-port $metricsPort --config $configFilePath"
 
     $proj.jobs += @{
       cmd     = $cmd
       jobName = $jobName
+      typ     = "dapr"
     }
 
     if ($skipAppId -eq $proj.appId) {
@@ -114,6 +118,7 @@ if ($true) {
       $proj.jobs += @{
         cmd     = $cmd
         jobName = $jobName
+        typ     = "dotnet-run"
       }  
     }
 
@@ -123,6 +128,8 @@ if ($true) {
   checkError
   Write-Host "$($projects.Count) Projects found"
 }
+
+$jobNamePattern = $projects | Join-String -Property appId -Separator "|" -OutputPrefix "(placement|" -OutputSuffix ")"
 
 # --------------------------------------------------------------------------------
 if ($dbg) {
@@ -175,10 +182,12 @@ if ($writeDaprScripts) {
   }
  
   $sumOuts = @()
+  $sumOuts2 = @()
 
   "-" * 80
 
   $sumOuts += "dotnet build $($solutionFilePath)"
+  $sumOuts2 += "dotnet build $($solutionFilePath)"
 
   foreach ($proj in $projects) {  
     if ($dbg) {
@@ -214,13 +223,110 @@ if ($writeDaprScripts) {
     }
   }
   
-    $sumOuts | Set-Content (Join-Path $daprScriptsPath 'run-all.cmd')
+  $sumOuts | Set-Content (Join-Path $daprScriptsPath 'run-all.cmd')
 
   @(
     'title dapr dashboard',
     'dapr dashboard'
   ) | Set-Content (Join-Path $daprScriptsPath 'dashboard.cmd')
 
+
+}
+
+
+# --------------------------------------------------------------------------------
+if ($startJobs -or $stopJobs) {
+  "-" * 80
+  Write-Host 'Stopping Jobs'
+  # Get-Job | Where-Object { $_.Name -match $jobNamePattern } | Stop-Job -PassThru | Remove-Job | Out-Host
+  Get-Job | Stop-Job -PassThru | Remove-Job | Out-Host
+}
+
+# --------------------------------------------------------------------------------
+if ($startJobs) {
+  "-" * 80
+  Write-Host 'Starting Jobs'
+
+
+  foreach ($proj in $projects) {  
+    if ($dbg) {
+      Write-Host "  Project: $($proj.name)"  
+    }
+  
+    foreach ($j in $proj.jobs) {
+      $cmd = $j.cmd
+      $jobName = $j.jobName
+      $jobTyp = $j.typ
+
+      # if ($dbg) {
+      #   Write-Host "   $jobName"  
+      # }
+
+      Write-Host "    Start Job: $jobTyp $jobName"
+
+      if ($jobTyp -eq "dapr") {
+        Start-Job -Name $jobName -ScriptBlock {
+
+          param( $appId, $appPort, $daprHttpPort, $daprGrpcPort, $daprPlacementPort, $metricsPort, $componentsPath, $configFile)
+    
+          dapr run --app-id $appId  `
+            --app-port $appPort `
+            --placement-host-address "localhost:$daprPlacementPort" `
+            --log-level debug `
+            --components-path $componentsPath `
+            --dapr-http-port $daprHttpPort `
+            --dapr-grpc-port $daprGrpcPort `
+            --metrics-port $metricsPort `
+            --config $configFile
+    
+        } -Argument $proj.appId, $proj.appPort, $proj.daprHttpPort, $proj.daprGrpcPort, $daprPlacementPort, $proj.metricsPort, $componentsPath, $configFile
+    
+  
+      }
+
+      if ($jobTyp -eq "dotnet-run") {
+        Start-Job -Name $jobName -ScriptBlock {
+          param($projectFile, $launchProfile)
+  
+          # dotnet run --project $projectFile --urls $env:ASPNETCORE_URLS --launch-profile $launchProfile # --property DAPR_DEV=true
+          # dotnet run --project $projectFile --launch-profile $launchProfile --property:DAPR_DEV=true --property:DAPR_DEV_INST=X$id
+          dotnet run --project $projectFile --launch-profile $launchProfile --no-build
+  
+        } -Argument $proj.projectFile, $proj.settingName
+      }
+    
+    }
+
+  }
+}
+# --------------------------------------------------------------------------------
+if ($showJobs) {
+  "-" * 80
+  Write-Host 'Showing Jobs'
+
+  Get-Job | Where-Object { $_.Name -match $jobNamePattern } | Format-Table Name, State
+
+  "-" * 80
+  $jobs = Get-Job | Where-Object { $_.Name -match $jobNamePattern }
+  foreach ($job in $jobs) {
+
+    $errors = $null
+    Write-Host $job
+    if ($job -match "-app$") {
+      $errors = (Receive-Job -Name $job.Name -Keep) -match "(error|fail)\:"
+    }
+    else {
+      $errors = (Receive-Job -Name $job.Name -Keep) -match "level\=error"
+    }
+
+    if ($errors) {
+      "-" * 80
+      Write-Host "ERROR IN JOB:" $job.Name -ForegroundColor Red
+      $errors
+    }
+    "-" * 80
+  }
+  # Get-Job | Format-Table Name, State
 
 }
 
