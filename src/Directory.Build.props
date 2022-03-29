@@ -1,3 +1,47 @@
 <Project>
     <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)..\, Directory.Build.props))\Directory.Build.props"/>
+
+    <ItemGroup>
+        <Using Include="StarlightOne"/>
+        <ProjectReference Include="$(RepoRoot)\templates\SourceGenerators\SourceGenerators.csproj" ReferenceOutputAssembly="false"
+                          OutputItemType="Analyzer"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IsFrameworkProject)' != 'true'">
+        <ProjectReference Include="$(FrameworkRoot)\StarlightOne.Common\StarlightOne.Common.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IsTestProject)' != 'true'">
+        <PackageReference Include="MinVer" Version="3.1.0" PrivateAssets="All"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+        <Using Include="JetBrains.Annotations"/>
+        <!-- <Using Include="Eventuous"/> -->
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IsHostProject)' == 'true'">
+        <Using Include="Swashbuckle.AspNetCore.Annotations"/>
+        <Using Include="Microsoft.AspNetCore.Mvc"/>
+        <Using Include="Microsoft.Extensions.Options"/>
+        <Using Include="Microsoft.Extensions.Logging"/>
+        <ProjectReference Include="$(FrameworkRoot)\StarlightOne.Hosting\StarlightOne.Hosting.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+        <PackageReference Include="AutoFixture" Version="4.17.0"/>
+        <PackageReference Include="Bogus" Version="34.0.2"/>
+        <PackageReference Include="FluentAssertions" Version="6.5.1"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0"/>
+        <PackageReference Include="xunit" Version="2.4.1"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="All"/>
+        <PackageReference Include="coverlet.collector" Version="3.1.2" PrivateAssets="All"/>
+        <PackageReference Include="Xunit.Extensions.Logging" Version="1.1.0"/>
+        <Using Include="Xunit"/>
+        <Using Include="Xunit.Abstractions"/>
+        <Using Include="FluentAssertions"/>
+        <Using Include="FluentAssertions.Extensions"/>
+        <Using Include="AutoFixture"/>
+        <Using Include="Microsoft.Extensions.Logging"/>
+    </ItemGroup>
+
 </Project>    

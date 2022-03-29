@@ -7,6 +7,7 @@ namespace Starships.Command.Api.Controllers;
 public class StarshipCommandController : ControllerBase
 {
     private readonly ILogger<StarshipCommandController> _logger;
+    // ReSharper disable once NotAccessedField.Local
     private readonly DaprClient _daprClient;
 
     public StarshipCommandController(ILogger<StarshipCommandController> logger, DaprClient daprClient)

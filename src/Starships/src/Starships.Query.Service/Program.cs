@@ -1,8 +1,15 @@
 using Serilog;
 using Starships.Query.Service;
+using Starships.ReadModel;
 
 var log = SerilogExtensions.CreateBootstrapLogger();
 log("Starting up");
+
+// foreach (var VARIABLE in ProductCategory.Items)
+// {
+//     ProductCategory.
+// }
+
 
 try
 {

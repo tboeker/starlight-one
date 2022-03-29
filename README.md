@@ -88,6 +88,10 @@ dotnet snitch
 
 * https://github.com/eventuous
 
+## source generator
+
+* https://www.thinktecture.com/en/net/roslyn-source-generators-introduction/
+
 # Log the Steps
 
 ```

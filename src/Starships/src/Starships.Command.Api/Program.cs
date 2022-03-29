@@ -4,6 +4,9 @@ using Starships.Command.Api;
 var log = SerilogExtensions.CreateBootstrapLogger();
 log("Starting up");
 
+
+
+
 try
 {
     var builder = WebApplication.CreateBuilder(args);
