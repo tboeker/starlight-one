@@ -1,0 +1,58 @@
+<Project>
+
+  <!-- https://devblogs.microsoft.com/nuget/introducing-central-package-management/ -->
+  
+  <PropertyGroup>
+    <!-- <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled> -->
+  </PropertyGroup>
+  
+    <PropertyGroup Label="Package versions for .NET 6" Condition="$(TargetFramework) == 'net6.0'">
+        <MicrosoftExtensionsVer>[6.0,)</MicrosoftExtensionsVer>
+        <MicrosoftTestHostVer>[6.0,)</MicrosoftTestHostVer>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <EventuousVersion>0.6.1-alpha.0.7</EventuousVersion>
+        <DaprVersion>1.7.0</DaprVersion>
+        <OpenTelemetryInstrumentationVersion>1.0.0-rc9.3</OpenTelemetryInstrumentationVersion>
+        <OpenTelemetrExporterVersion>1.3.0-beta.1</OpenTelemetrExporterVersion>
+    </PropertyGroup>
+
+  <ItemGroup>
+
+        <PackageReference Update="AutoFixture" Version="4.17.0"/>
+        <PackageReference Update="Bogus" Version="34.0.2"/>
+        <PackageReference Update="coverlet.collector" Version="3.1.2"/>
+      
+        <PackageReference Update="Dapr.Actors.AspNetCore" Version="$(DaprVersion)" />
+        <PackageReference Update="Dapr.AspNetCore" Version="$(DaprVersion)" />
+        <PackageReference Update="Dapr.Extensions.Configuration" Version="$(DaprVersion)" />
+
+        <PackageReference Update="FluentAssertions" Version="6.6.0"/>
+        <PackageReference Update="JetBrains.Annotations" Version="2022.1.0" />
+        
+        <PackageReference Update="Microsoft.AspNetCore.TestHost" Version="$(MicrosoftTestHostVer)"/>
+        <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.1.0"  />
+        <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.1.0"/>
+        <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1"/>
+      
+        <PackageReference Update="MinVer" Version="3.1.0"/>
+        <PackageReference Update="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
+
+        <PackageReference Update="OpenTelemetry.Exporter.Prometheus" Version="$(OpenTelemetrExporterVersion)" />
+        <PackageReference Update="OpenTelemetry.Exporter.Zipkin" Version="$(OpenTelemetrExporterVersion)" />
+        <PackageReference Update="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OpenTelemetryInstrumentationVersion)" />
+        <PackageReference Update="OpenTelemetry.Instrumentation.GrpcNetClient" Version="$(OpenTelemetryInstrumentationVersion)" />
+
+        <PackageReference Update="Serilog.AspNetCore" Version="6.0.0-dev-00265" />
+        <PackageReference Update="Serilog.Sinks.Seq" Version="5.1.1" />
+
+        <PackageReference Update="Swashbuckle.AspNetCore" Version="6.3.0" />
+        <PackageReference Update="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
+
+        <PackageReference Update="xunit" Version="2.4.1"/>
+        <PackageReference Update="xunit.runner.visualstudio" Version="2.4.3"/>
+        <PackageReference Update="Xunit.Extensions.Logging" Version="1.1.0"/>
+
+  </ItemGroup>
+</Project>

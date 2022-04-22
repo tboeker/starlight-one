@@ -4,10 +4,10 @@ using Starships.ReadModel;
 
 var log = SerilogExtensions.CreateBootstrapLogger();
 log("Starting up");
-
-// foreach (var VARIABLE in ProductCategory.Items)
+//
+// foreach (var productCategory in ProductCategory.Items)
 // {
-//     ProductCategory.
+//     Console.WriteLine(productCategory.Name);
 // }
 
 
@@ -15,11 +15,11 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    var app = builder
+    var application = builder
         .ConfigureServices(log)
         .ConfigurePipeline(log);
 
-    app.Run();
+    application.Run();
 }
 catch (Exception ex)
 {

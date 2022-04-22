@@ -8,6 +8,7 @@
 *.deb
 temp*.*
 .dapr-run
+.outdated.*
 
 # User-specific files
 *.rsuser

@@ -49,6 +49,8 @@ dotnet new --install .\
 # find outdated packages
 dotnet list package --outdated --highest-minor
 dotnet list package --outdated
+dotnet list package --outdated --include-prerelease > .outdated.txt
+dotnet list package --outdated --highest-minor --include-prerelease > .outdated.txt
 
 # find transitive package references that can be removed.
 dotnet snitch

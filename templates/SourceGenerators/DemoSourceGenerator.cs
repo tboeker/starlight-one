@@ -3,9 +3,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace SourceGenerators;
 
-[Generator]
+[Generator(LanguageNames.CSharp)]
 public class DemoSourceGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -15,6 +14,10 @@ public class DemoSourceGenerator : IIncrementalGenerator
             .Where(type => type is not null)!
             .Collect<ITypeSymbol>();
 
+
+        //throw new Exception("Test exception!"); // delete me after test
+
+        //
         context.RegisterSourceOutput(enumTypes, GenerateCode);
     }
 
@@ -50,7 +53,12 @@ public class DemoSourceGenerator : IIncrementalGenerator
 
         var type = ModelExtensions.GetDeclaredSymbol(context.SemanticModel, classDeclaration) as ITypeSymbol;
 
-        return type is null || !IsEnumeration(type) ? null : type;
+        var ret = type is null || !IsEnumeration(type) ? null : type;
+
+        if (ret == null)
+            throw new Exception("GetEnumTypeOrNull null");
+
+        return ret;
     }
 
     private static bool IsPartial(ClassDeclarationSyntax classDeclaration)
@@ -61,27 +69,38 @@ public class DemoSourceGenerator : IIncrementalGenerator
     private static bool IsEnumeration(ISymbol type)
     {
         return type.GetAttributes()
-            .Any(a => a.AttributeClass?.Name == "EnumGenerationAttribute" &&
-                      a.AttributeClass.ContainingNamespace is
-                      {
-                          Name: "StarlightOne",
-                          ContainingNamespace.IsGlobalNamespace: true
-                      });
+            .Any(a => a.AttributeClass?.Name == "EnumGenerationAttribute"
+                // &&
+                // a.AttributeClass.ContainingNamespace is
+                // {
+                //     Name: "StarlightOne",
+                //     ContainingNamespace.IsGlobalNamespace: true
+                // }
+            );
     }
 
     private static void GenerateCode(SourceProductionContext context, ImmutableArray<ITypeSymbol> enumerations)
     {
         if (enumerations.IsDefaultOrEmpty)
+        {
+            //throw new Exception(enumerations.IsDefaultOrEmpty);
             return;
+        }
+
 
         foreach (var type in enumerations.Distinct(SymbolEqualityComparer.Default).Cast<ITypeSymbol>())
         {
             context.CancellationToken.ThrowIfCancellationRequested();
 
             var code = GenerateCode(type);
+          
             var typeNamespace = type.ContainingNamespace.IsGlobalNamespace ? null : $"{type.ContainingNamespace}.";
+            //  throw new Exception(typeNamespace);
 
-            context.AddSource($"{typeNamespace}{type.Name}.g.cs", code);
+            var hintName = $"{typeNamespace}{type.Name}.g.cs";
+            //throw new Exception(hintName);
+            
+            context.AddSource(hintName, code);
         }
     }
 

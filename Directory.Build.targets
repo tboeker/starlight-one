@@ -1,7 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  
-<!--    <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="$(CentralPackageVersionsSdkVersion)" /> -->
-
+     <Import Project="$(MSBuildThisFileDirectory)\Directory.Packages-X.props"/>
+     
     <Target Name="SetAssemblyVersion" AfterTargets="MinVer">
         <PropertyGroup>
             <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)</FileVersion>
