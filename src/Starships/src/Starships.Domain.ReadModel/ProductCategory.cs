@@ -1,6 +1,6 @@
 ﻿namespace Starships.ReadModel;
 
-[EnumGeneration]
+
 public partial class ProductCategory
 {
     public static readonly ProductCategory Fruits = new("Fruits");

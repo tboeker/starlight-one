@@ -1,17 +1,18 @@
 <Project>
     <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)..\, Directory.Build.props))\Directory.Build.props"/>
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(IsSourceGeneratorProject)' != 'true'" >
         <Using Include="StarlightOne"/>
-        <ProjectReference Include="$(RepoRoot)\templates\SourceGenerators\SourceGenerators.csproj" ReferenceOutputAssembly="false"
+        <ProjectReference Include="$(RepoRoot)\src\SourceGenerators\src\StarlightOne.SourceGenerators\StarlightOne.SourceGenerators.csproj" 
+                        ReferenceOutputAssembly="false"
                           OutputItemType="Analyzer"/>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(IsFrameworkProject)' != 'true'">
+    <ItemGroup Condition="'$(IsFrameworkProject)' != 'true' AND '$(IsSourceGeneratorProject)' != 'true'">
         <ProjectReference Include="$(FrameworkRoot)\StarlightOne.Common\StarlightOne.Common.csproj"/>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(IsTestProject)' != 'true'">
+    <ItemGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsSourceGeneratorProject)' != 'true'">
         <PackageReference Include="MinVer" PrivateAssets="All"/>
         <PackageReference Include="JetBrains.Annotations" PrivateAssets="All"/>
         <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
@@ -19,7 +20,7 @@
         <!-- <Using Include="Eventuous"/> -->
     </ItemGroup>
 
-    <ItemGroup Condition="'$(IsHostProject)' == 'true'">
+    <ItemGroup Condition="'$(IsHostProject)' == 'true' AND '$(IsSourceGeneratorProject)' != 'true'">
         <Using Include="Swashbuckle.AspNetCore.Annotations"/>
         <Using Include="Microsoft.AspNetCore.Mvc"/>
         <Using Include="Microsoft.Extensions.Options"/>
