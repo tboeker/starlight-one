@@ -1,25 +1,20 @@
-using Serilog;
-using Starships.Command.Service;
+var builder = new MyAppBuilder(args)
+    .AddControllers()
+    .AddSwagger()
+    .AddDapr();
 
-var log = SerilogExtensions.CreateBootstrapLogger();
-log("Starting up");
+var app = builder.BuildApplication()
+    .UseInfoPage()
+    .UseSwagger()
+    .UseControllers()
+    .UseDapr()
+    ;
 
-try
+app.App.UseEndpoints(endpoints =>
 {
-    var builder = WebApplication.CreateBuilder(args);
+    endpoints.MapSubscribeHandler();
+    endpoints.MapControllers();
+});
 
-    var app = builder
-        .ConfigureServices(log)
-        .ConfigurePipeline(log);
 
-    app.Run();
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Unhandled exception");
-}
-finally
-{
-    Log.Information("Shut down complete");
-    Log.CloseAndFlush();
-}
+await app.Run();

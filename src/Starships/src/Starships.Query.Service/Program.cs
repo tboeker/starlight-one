@@ -1,32 +1,20 @@
-using Serilog;
 using Starships.Query.Service;
-using Starships.ReadModel;
 
-var log = SerilogExtensions.CreateBootstrapLogger();
-log("Starting up");
-//
-// foreach (var productCategory in ProductCategory.Items)
-// {
-//     Console.WriteLine(productCategory.Name);
-// }
+var builder = new MyAppBuilder(args)
+        .AddControllers()
+        .AddSwagger()
+        .AddDapr()
+        .AddService<StarshipQueryService>()
+        .AddApi<StarshipQueryApi>()
+    ;
+
+var app = builder.BuildApplication()
+        .UseInfoPage()
+        .UseControllers()
+        .UseSwagger()
+        .UseDapr()
+        .UseApis()
+    ;
 
 
-try
-{
-    var builder = WebApplication.CreateBuilder(args);
-
-    var application = builder
-        .ConfigureServices(log)
-        .ConfigurePipeline(log);
-
-    application.Run();
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Unhandled exception");
-}
-finally
-{
-    Log.Information("Shut down complete");
-    Log.CloseAndFlush();
-}
+await app.Run();

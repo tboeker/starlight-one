@@ -1,24 +1,7 @@
-using Serilog;
+var builder = new MyAppBuilder(args);
+builder.WebApplicationBuilder.ConfigureServices(builder.Log);
 
-var log = SerilogExtensions.CreateBootstrapLogger();
-log("Starting up");
+var app = builder.BuildApplication();
+app.App.ConfigurePipeline(app.Log);
 
-try
-{
-    var builder = WebApplication.CreateBuilder(args);
-
-    var app = builder
-        .ConfigureServices(log)
-        .ConfigurePipeline(log);
-
-    app.Run();
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Unhandled exception");
-}
-finally
-{
-    Log.Information("Shut down complete");
-    Log.CloseAndFlush();
-}
+await app.Run();

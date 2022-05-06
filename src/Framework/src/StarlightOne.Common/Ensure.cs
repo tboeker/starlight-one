@@ -25,23 +25,4 @@ public static class Ensure {
     public static string NotEmptyString(string? value, [CallerArgumentExpression("value")] string? name = default)
         => !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentNullException(name);
 
-    /// <summary>
-    /// Throws a <see cref="DomainException"/> with a given message if the condition is not met
-    /// </summary>
-    /// <param name="condition">Condition to check</param>
-    /// <param name="errorMessage">Message for the exception</param>
-    /// <exception cref="DomainException"></exception>
-    public static void IsTrue(bool condition, Func<string> errorMessage) {
-        if (!condition) throw new DomainException(errorMessage());
-    }
-
-    /// <summary>
-    /// Throws a custom exception if the condition is not met
-    /// </summary>
-    /// <param name="condition">Condition to check</param>
-    /// <param name="getException"></param>
-    /// <exception cref="Exception"></exception>
-    public static void IsTrue(bool condition, Func<Exception> getException) {
-        if (!condition) throw getException();
-    }
-}
+  }

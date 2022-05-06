@@ -1,6 +1,6 @@
 ﻿namespace StarlightOne;
 
-internal static class HostingExtensions
+internal static class Registrations
 {
     internal static WebApplication ConfigureServices(this WebApplicationBuilder builder, Action<string> log)
     {

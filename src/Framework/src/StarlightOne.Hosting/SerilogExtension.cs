@@ -16,6 +16,15 @@ public static class SerilogExtensions
 
         return Log.Logger.Information;
     }
+    
+    public static Serilog.ILogger CreateBootstrapLogger1()
+    {
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateBootstrapLogger();
+
+        return Log.Logger;
+    }
 
     public static WebApplicationBuilder AddMySerilog(this WebApplicationBuilder builder)
     {

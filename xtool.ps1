@@ -18,35 +18,13 @@ Param(
   # , [switch] $skipBuild
 )
 
-
 # --------------------------------------------------------------------------------
 function resetError() { $global:LASTEXITCODE = 0 }
 function checkError() { if (-not $continueOnError) { if ($LASTEXITCODE -ne 0) { throw 'error' } } }
 
 # --------------------------------------------------------------------------------
-function runX() {
-  [Cmdletbinding()] param([string] $cmd, [array] $argsarr) 
-  resetError
-  if ($argsarr) {
-    Write-Host '  Run with args:' $cmd $argsarr
-    & $cmd $argsarr
-  }
-  else {
-    Write-Host '  Run:' $cmd
-    & $cmd
-  }  
-  checkError
-}
 
-# --------------------------------------------------------------------------------
-# helper function : update environment variable in launch setting
-function Update-EnvironmentVariable ($environmentVariables, $name, $value) {
-  $m = $environmentVariables | Get-Member $name
-  if ($m) {
-    $environmentVariables.PSObject.Properties.Remove($name)
-  }
-  $environmentVariables | Add-Member -MemberType NoteProperty -Name $name -Value $value
-}
+
 
 # --------------------------------------------------------------------------------
 $DebugPreference
@@ -60,74 +38,77 @@ $configFilePath = Join-Path './dapr' 'config.yaml' -Resolve
 $componentsPath = Join-Path './dapr' 'components/' -Resolve
 $daprScriptsPath = Join-Path '.' '.dapr-run'
 
+
+
 # --------------------------------------------------------------------------------
-if ($true) {
-  resetError
-  "-" * 80
-  $daprHttpPort = 3500
-  $daprGrpcPort = 50001
-  $metricsPort = 9091
-  $appPort = 5000
-  Write-Host 'Loadings Projects'
-  $files = Get-ChildItem -Path './src' -Filter 'launchSettings.json' -Recurse -Depth 99;
-  $file = $files[0]
+# if ($true) {
+#   resetError
+#   "-" * 80
+#   $daprHttpPort = 3500
+#   $daprGrpcPort = 50001
+#   $metricsPort = 9091
+#   $appPort = 5000
+#   Write-Host 'Loadings Projects'
+#   $files = Get-ChildItem -Path './src' -Filter 'launchSettings.json' -Recurse -Depth 99;
+#   $file = $files[0]
 
-  foreach ($file in $files) {    
-    $projDir = $file.Directory.Parent
-    if ($dbg) { Write-Debug "  Project Dir: $($projDir.FullName)" }
-    $projectName = $projDir.Name
-    $projFileName = "$($projectName).csproj"
-    $projFile = Join-Path $projDir.FullName $projFileName -Resolve   
-    $projFileItem = Get-Item -Path $projFile
+#   foreach ($file in $files) {    
+#     $projDir = $file.Directory.Parent
+#     if ($dbg) { Write-Debug "  Project Dir: $($projDir.FullName)" }
+#     $projectName = $projDir.Name
+#     $projFileName = "$($projectName).csproj"
+#     $projFile = Join-Path $projDir.FullName $projFileName -Resolve   
+#     $projFileItem = Get-Item -Path $projFile
 
-    $proj = @{
-      appId              = $projectName.Replace('.', '-').ToLowerInvariant()
-      projectFolder      = $projDir.FullName
-      projectFile        = $projFileItem.FullName
-      settingName        = $projDir.Name
-      launchSettingsFile = $file.FullName
-      name               = $projectName
-      urls               = "http://localhost:" + $appPort # + ";https://localhost:" + $($appPort + 1)
-      appPort            = $appPort.ToString()
-      daprHttpPort       = $daprHttpPort.ToString()
-      daprGrpcPort       = $daprGrpcPort.ToString()
-      metricsPort        = $metricsPort.ToString()
-      jobs               = @()
-    }
+#     $proj = @{
+#       appId              = $projectName.Replace('.', '-').ToLowerInvariant()
+#       projectFolder      = $projDir.FullName
+#       projectFile        = $projFileItem.FullName
+#       settingName        = $projDir.Name
+#       launchSettingsFile = $file.FullName
+#       name               = $projectName
+#       urls               = "http://localhost:" + $appPort # + ";https://localhost:" + $($appPort + 1)
+#       appPort            = $appPort.ToString()
+#       daprHttpPort       = $daprHttpPort.ToString()
+#       daprGrpcPort       = $daprGrpcPort.ToString()
+#       metricsPort        = $metricsPort.ToString()
+#       jobs               = @()
+#     }
     
-    $daprHttpPort += 10
-    $daprGrpcPort += 10
-    $appPort += 10
-    $metricsPort += 1
+#     $daprHttpPort += 10
+#     $daprGrpcPort += 10
+#     $appPort += 10
+#     $metricsPort += 1
 
-    $jobName = $proj.appId + "-dapr"
-    $cmd = "dapr run --app-id $($proj.appId) --app-port $($proj.appPort) --placement-host-address localhost:$daprPlacementPort --log-level debug --components-path $componentsPath --dapr-http-port $($proj.daprHttpPort) --dapr-grpc-port $($proj.daprGrpcPort) --metrics-port $metricsPort --config $configFilePath"
+#     $jobName = $proj.appId + "-dapr"
+#     $cmd = "dapr run --app-id $($proj.appId) --app-port $($proj.appPort) --placement-host-address localhost:$daprPlacementPort --log-level debug --components-path $componentsPath --dapr-http-port $($proj.daprHttpPort) --dapr-grpc-port $($proj.daprGrpcPort) --metrics-port $metricsPort --config $configFilePath"
 
-    $proj.jobs += @{
-      cmd     = $cmd
-      jobName = $jobName
-      typ     = "dapr"
-    }
+#     $proj.jobs += @{
+#       cmd     = $cmd
+#       jobName = $jobName
+#       typ     = "dapr"
+#     }
 
-    if ($skipAppId -eq $proj.appId) {
-      Write-Host "expecting" $($proj.projectFile) "to be started from development environment"
-    }
-    else {
-      $jobName = $proj.appId + "-app"
-      $cmd = "dotnet run --project $($proj.projectFile) --launch-profile $($proj.settingName) --no-build"
-      $proj.jobs += @{
-        cmd     = $cmd
-        jobName = $jobName
-        typ     = "dotnet-run"
-      }  
-    }
+#     if ($skipAppId -eq $proj.appId) {
+#       Write-Host "expecting" $($proj.projectFile) "to be started from development environment"
+#     }
+#     else {
+#       $jobName = $proj.appId + "-app"
+#       $cmd = "dotnet run --project $($proj.projectFile) --launch-profile $($proj.settingName) --no-build"
+#       $proj.jobs += @{
+#         cmd     = $cmd
+#         jobName = $jobName
+#         typ     = "dotnet-run"
+#       }  
+#     }
 
-    $projects += $proj
-  }
+#     $projects += $proj
+#   }
 
-  checkError
-  Write-Host "$($projects.Count) Projects found"
-}
+#   checkError
+#   Write-Host "$($projects.Count) Projects found"
+# }
+
 
 $jobNamePattern = $projects | Join-String -Property appId -Separator "|" -OutputPrefix "(placement|" -OutputSuffix ")"
 
@@ -140,106 +121,106 @@ if ($dbg) {
 }
 
 # --------------------------------------------------------------------------------
-if ($updatelaunchSettings) {
-  "-" * 80
-  Write-Host 'Updating Launch Settings'
-  resetError
+# if ($updatelaunchSettings) {
+#   "-" * 80
+#   Write-Host 'Updating Launch Settings'
+#   resetError
 
-  foreach ($proj in $projects) {
-    $launchSettingsFile = $proj.launchSettingsFile
+#   foreach ($proj in $projects) {
+#     $launchSettingsFile = $proj.launchSettingsFile
 
-    if ($dbg) {
-      Write-Host "  $($proj.name) | $launchSettingsFile"  
-    }
+#     if ($dbg) {
+#       Write-Host "  $($proj.name) | $launchSettingsFile"  
+#     }
 
-    $launchSettings = Get-Content $launchSettingsFile | ConvertFrom-Json
+#     $launchSettings = Get-Content $launchSettingsFile | ConvertFrom-Json
 
-    foreach ($profile in $launchSettings.profiles.PSObject.Properties) {
-      if ($profile.Name -eq $proj.settingName) {
-        Update-EnvironmentVariable $profile.Value.environmentVariables "ASPNETCORE_URLS" $proj.urls
-        Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_HTTP_PORT" $proj.daprHttpPort
-        Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_GRPC_PORT" $proj.daprGrpcPort
-      }
-    }
+#     foreach ($profile in $launchSettings.profiles.PSObject.Properties) {
+#       if ($profile.Name -eq $proj.settingName) {
+#         Update-EnvironmentVariable $profile.Value.environmentVariables "ASPNETCORE_URLS" $proj.urls
+#         Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_HTTP_PORT" $proj.daprHttpPort
+#         Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_GRPC_PORT" $proj.daprGrpcPort
+#       }
+#     }
 
-    $launchSettings | ConvertTo-Json -Depth 10 | Set-Content $launchSettingsFile
-    if ($dbg) {
-      Write-Host "  Updated" $launchSettingsFile
-    }
-  }
-  checkError
-}
+#     $launchSettings | ConvertTo-Json -Depth 10 | Set-Content $launchSettingsFile
+#     if ($dbg) {
+#       Write-Host "  Updated" $launchSettingsFile
+#     }
+#   }
+#   checkError
+# }
 
 # --------------------------------------------------------------------------------
 if ($writeDaprScripts) {
-  "-" * 80
-  Write-Host 'Writing dapr files'
-  if ($dbg) {
-    Write-Host "  daprScriptsDir: $($daprScriptsPath)"  
-  }
-  if (! (Test-Path -Path $daprScriptsPath)) {
-    New-Item -Path $daprScriptsPath -ItemType Directory
-  }
+# '  "-" * 80
+#   Write-Host 'Writing dapr files'
+#   if ($dbg) {
+#     Write-Host "  daprScriptsDir: $($daprScriptsPath)"  
+#   }
+#   if (! (Test-Path -Path $daprScriptsPath)) {
+#     New-Item -Path $daprScriptsPath -ItemType Directory
+#   }
  
-  $sumOuts = @()
-  $sumOuts2 = @()
+#   $sumOuts = @()
+#   $sumOuts2 = @()
 
-  "-" * 80
+#   "-" * 80
 
-  $sumOuts += "dotnet build $($solutionFilePath)"
-  $sumOuts2 += "dotnet build $($solutionFilePath)"
+#   $sumOuts += "dotnet build $($solutionFilePath)"
+#   $sumOuts2 += "dotnet build $($solutionFilePath)"
 
-  foreach ($proj in $projects) {  
-    if ($dbg) {
-      Write-Host "  $($proj.name)"  
-    }
+#   foreach ($proj in $projects) {  
+#     if ($dbg) {
+#       Write-Host "  $($proj.name)"  
+#     }
   
-    foreach ($j in $proj.jobs) {
+#     foreach ($j in $proj.jobs) {
       
-      $cmd = $j.cmd
-      $jobName = $j.jobName
+#       $cmd = $j.cmd
+#       $jobName = $j.jobName
 
-      if ($dbg) {
-        Write-Host "   $jobName"  
-      }
+#       if ($dbg) {
+#         Write-Host "   $jobName"  
+#       }
         
-      $fileName = $jobName + '.cmd'
-      if ($dbg) {
-        Write-Host "    fileName: $fileName"  
-      }
+#       $fileName = $jobName + '.cmd'
+#       if ($dbg) {
+#         Write-Host "    fileName: $fileName"  
+#       }
 
-      $filePath = Join-Path -Path $daprScriptsPath -ChildPath $fileName
-      if ($dbg) {
-        Write-Host "    Scriptpath: $($filePath)"  
-      }
+#       $filePath = Join-Path -Path $daprScriptsPath -ChildPath $fileName
+#       if ($dbg) {
+#         Write-Host "    Scriptpath: $($filePath)"  
+#       }
    
-      $fileOuts = @()
-      $fileOuts += 'title ' + $jobName
-      $fileOuts += 'start ' + $cmd
-      # $fileOuts += $cmd
-      $fileOuts | Set-Content $filePath
+#       $fileOuts = @()
+#       $fileOuts += 'title ' + $jobName
+#       $fileOuts += 'start ' + $cmd
+#       # $fileOuts += $cmd
+#       $fileOuts | Set-Content $filePath
 
-      $sumOuts += 'start ' + $fileName
-    }
-  }
+#       $sumOuts += 'start ' + $fileName
+#     }
+#   }
   
-  $sumOuts | Set-Content (Join-Path $daprScriptsPath 'run-all.cmd')
+#   $sumOuts | Set-Content (Join-Path $daprScriptsPath 'run-all.cmd')
 
-  @(
-    'title dapr dashboard',
-    'dapr dashboard'
-  ) | Set-Content (Join-Path $daprScriptsPath 'dashboard.cmd')
+#   @(
+#     'title dapr dashboard',
+#     'dapr dashboard'
+#   ) | Set-Content (Join-Path $daprScriptsPath 'dashboard.cmd')
 
-
+# '
 }
 
 
 # --------------------------------------------------------------------------------
 if ($startJobs -or $stopJobs) {
-  "-" * 80
-  Write-Host 'Stopping Jobs'
-  # Get-Job | Where-Object { $_.Name -match $jobNamePattern } | Stop-Job -PassThru | Remove-Job | Out-Host
-  Get-Job | Stop-Job -PassThru | Remove-Job | Out-Host
+  # "-" * 80
+  # Write-Host 'Stopping Jobs'
+  # # Get-Job | Where-Object { $_.Name -match $jobNamePattern } | Stop-Job -PassThru | Remove-Job | Out-Host
+  # Get-Job | Stop-Job -PassThru | Remove-Job | Out-Host
 }
 
 # --------------------------------------------------------------------------------
@@ -301,44 +282,44 @@ if ($startJobs) {
 }
 # --------------------------------------------------------------------------------
 if ($showJobs) {
-  "-" * 80
-  Write-Host 'Showing Jobs'
+  # "-" * 80
+  # Write-Host 'Showing Jobs'
 
-  Get-Job | Where-Object { $_.Name -match $jobNamePattern } | Format-Table Name, State
+  # Get-Job | Where-Object { $_.Name -match $jobNamePattern } | Format-Table Name, State
 
-  "-" * 80
-  $jobs = Get-Job | Where-Object { $_.Name -match $jobNamePattern }
-  foreach ($job in $jobs) {
+  # "-" * 80
+  # $jobs = Get-Job | Where-Object { $_.Name -match $jobNamePattern }
+  # foreach ($job in $jobs) {
 
-    $errors = $null
-    Write-Host $job
-    if ($job -match "-app$") {
-      $errors = (Receive-Job -Name $job.Name -Keep) -match "(error|fail)\:"
-    }
-    else {
-      $errors = (Receive-Job -Name $job.Name -Keep) -match "level\=error"
-    }
+  #   $errors = $null
+  #   Write-Host $job
+  #   if ($job -match "-app$") {
+  #     $errors = (Receive-Job -Name $job.Name -Keep) -match "(error|fail)\:"
+  #   }
+  #   else {
+  #     $errors = (Receive-Job -Name $job.Name -Keep) -match "level\=error"
+  #   }
 
-    if ($errors) {
-      "-" * 80
-      Write-Host "ERROR IN JOB:" $job.Name -ForegroundColor Red
-      $errors
-    }
-    "-" * 80
-  }
-  # Get-Job | Format-Table Name, State
+  #   if ($errors) {
+  #     "-" * 80
+  #     Write-Host "ERROR IN JOB:" $job.Name -ForegroundColor Red
+  #     $errors
+  #   }
+  #   "-" * 80
+  # }
+  # # Get-Job | Format-Table Name, State
 
 }
 
 # --------------------------------------------------------------------------------
 if ($clean) {
-  "-" * 80
-  Write-Host 'Starting clean'
-  Get-ChildItem -Recurse -Include 'bin', 'bin2', 'obj', 'TestResults' -Path .\ |
-  ForEach-Object {
-    Remove-Item $_.FullName -recurse -force
-    Write-Host deleted $_.FullName
-  }
+  # "-" * 80
+  # Write-Host 'Starting clean'
+  # Get-ChildItem -Recurse -Include 'bin', 'bin2', 'obj', 'TestResults' -Path .\ |
+  # ForEach-Object {
+  #   Remove-Item $_.FullName -recurse -force
+  #   Write-Host deleted $_.FullName
+  # }
 }
 
 # --------------------------------------------------------------------------------

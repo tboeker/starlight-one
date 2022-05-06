@@ -50,7 +50,7 @@ public static class SwaggerExtensions
         {
             options.EnableAnnotations();
 
-            if (_ingress.HasPathBase())
+            if (_ingress.Enabled && _ingress.HasPathBase())
             {
                 _log($"ConfigureSwaggerGen: Add IngressPathFilter");
                 options.DocumentFilter<IngressPathFilter>(_ingress, _log);

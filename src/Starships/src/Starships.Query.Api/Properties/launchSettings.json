@@ -9,7 +9,9 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:5040",
         "DAPR_HTTP_PORT": "3540",
-        "DAPR_GRPC_PORT": "50001"
+        "DAPR_GRPC_PORT": "50041",
+        "Ingress__PathBase": "/api/starships/query",
+        "Ingress__Enabled": "true"
       }
     }
   }

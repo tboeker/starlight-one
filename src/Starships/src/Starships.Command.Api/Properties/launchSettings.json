@@ -9,18 +9,9 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:5020",
         "DAPR_HTTP_PORT": "3520",
-        "DAPR_GRPC_PORT": "50001"
-      }
-    },
-    "Starships.Command.Api.Ingress": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "http://localhost:5000",
-      "applicationUrl": "http://localhost:5000",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "Ingress__PathBase": "/api/starships/command"
+        "DAPR_GRPC_PORT": "50021",
+        "Ingress__PathBase": "/api/starships/command",
+        "Ingress__Enabled": "true"
       }
     }
   }

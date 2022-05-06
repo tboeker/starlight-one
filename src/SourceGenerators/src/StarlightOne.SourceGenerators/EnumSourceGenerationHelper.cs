@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
-namespace SourceGenerators;
+namespace StarlightOne.SourceGenerators;
 
 public static class EnumSourceGenerationHelper
 {

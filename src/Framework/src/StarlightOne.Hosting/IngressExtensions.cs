@@ -6,6 +6,8 @@ namespace StarlightOne;
 
 public class IngressOptions
 {
+    public bool Enabled { get; set; }
+    
     public string? PathBase { get; set; }
 
     public string GetPath(string path)
@@ -41,7 +43,7 @@ public static class IngressExtensions
 
         app.UseForwardedHeaders();
 
-        if (ingress.HasPathBase())
+        if (ingress.Enabled && ingress.HasPathBase())
         {
             var p = ingress.PathBase.EnsureStartsWith('/').EnsureNotEndsWith('/');
             log($"Ingress: UsePathBase: {p}");

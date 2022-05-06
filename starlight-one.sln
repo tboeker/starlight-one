@@ -27,6 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".files", ".files", "{1DB3D3
 		nuget.config = nuget.config
 		README.md = README.md
 		tye.yaml = tye.yaml
+		xtool.ps1 = xtool.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Starships", "Starships", "{A0FFAA6C-58B7-4D02-BABB-0F5B8E2D2733}"

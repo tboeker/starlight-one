@@ -1,6 +1,8 @@
-﻿namespace StarlightOne;
+﻿using Microsoft.AspNetCore.Routing;
 
-public class IApi
+namespace StarlightOne;
+
+public interface IApi
 {
-    
+    void Register(IEndpointRouteBuilder app);
 }
