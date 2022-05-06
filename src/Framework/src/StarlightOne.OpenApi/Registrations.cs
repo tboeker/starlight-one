@@ -1,15 +1,13 @@
-﻿using Serilog;
-
-namespace StarlightOne;
+﻿namespace StarlightOne;
 
 internal static class HostingExtensions
 {
     internal static WebApplication ConfigureServices(this WebApplicationBuilder builder, Action<string> log)
     {
-        builder
-            .AddMySerilog().
-            AddMyIngress(log);
-        
+        // builder
+        //     .AddMySerilog().
+        //     AddMyIngress(log);
+        //
         builder.Services.Configure<MySwaggerOptions>(builder.Configuration.GetSection("Swagger"));
 
         return builder.Build();
@@ -18,10 +16,9 @@ internal static class HostingExtensions
 
     internal static WebApplication ConfigurePipeline(this WebApplication app, Action<string> log)
     {
-        app.UseSerilogRequestLogging();
-
-        app.UseMyIngress(log);
-        
+        // app.UseSerilogRequestLogging();
+        // app.UseMyIngress(log);
+        //
         app.UseMyInfoPage(c =>
         {
             c.ShowSwaggerLinks = false;
