@@ -2,7 +2,7 @@
 
 internal static class Registrations
 {
-    internal static WebApplication ConfigureServices(this WebApplicationBuilder builder, Action<string> log)
+    internal static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder, Action<string> log)
     {
         // builder
         //     .AddMySerilog().
@@ -10,7 +10,7 @@ internal static class Registrations
         //
         builder.Services.Configure<MySwaggerOptions>(builder.Configuration.GetSection("Swagger"));
 
-        return builder.Build();
+        return builder;
     }
 
 

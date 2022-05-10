@@ -17,14 +17,14 @@ public static class SerilogExtensions
         return Log.Logger.Information;
     }
     
-    public static Serilog.ILogger CreateBootstrapLogger1()
-    {
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateBootstrapLogger();
-
-        return Log.Logger;
-    }
+    // public static Serilog.ILogger CreateBootstrapLogger1()
+    // {
+    //     Log.Logger = new LoggerConfiguration()
+    //         .WriteTo.Console()
+    //         .CreateBootstrapLogger();
+    //
+    //     return Log.Logger;
+    // }
 
     public static WebApplicationBuilder AddMySerilog(this WebApplicationBuilder builder)
     {
@@ -50,15 +50,15 @@ public static class SerilogExtensions
     }
 
 
-    public static Action<string> CreateLog(this WebApplication app)
-    {
-        var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
-
-        // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
-#pragma warning disable CA2254
-        void Log(string s) => logger.LogInformation(s);
-#pragma warning restore CA2254
-
-        return Log;
-    }
+//     public static Action<string> CreateLog(this WebApplication app)
+//     {
+//         var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
+//
+//         // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
+// #pragma warning disable CA2254
+//         void Log(string s) => logger.LogInformation(s);
+// #pragma warning restore CA2254
+//
+//         return Log;
+//     }
 }

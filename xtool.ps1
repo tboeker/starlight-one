@@ -24,15 +24,43 @@ function checkError() { if (-not $continueOnError) { if ($LASTEXITCODE -ne 0) { 
 
 # --------------------------------------------------------------------------------
 
+resetError
 
+$bdir = Get-Location
+
+if ($PSScriptRoot) {
+  $bdir = $PSScriptRoot
+}
+
+$path = [System.IO.Path]::Combine($bdir,'scripts','xtool.psm1')
+Write-Host 'Module Path:' $path
+
+$x = Get-Module -Name 'xtool'
+checkError
+
+if ($x) {
+  Write-Host 'Removing Module'
+  Remove-Module -Name 'xtool'
+  checkError
+}
+
+Write-Host 'Importing Module'
+Import-Module $path
+checkError
 
 # --------------------------------------------------------------------------------
+
+$mydebug = $false
+if ($dbg) {
+  $mydebug = $true
+}
 $DebugPreference
+# --------------------------------------------------------------------------------
 
 $host.ui.RawUI.WindowTitle = 'starlight-one-xtool'
 $solutionFile = 'starlight-one.sln'
 $solutionFilePath = Join-Path '.' $solutionFile -Resolve
-$projects = @()
+[array] $projects = ReadProjects -dbg $mydebug
 $daprPlacementPort = 50006
 $configFilePath = Join-Path './dapr' 'config.yaml' -Resolve
 $componentsPath = Join-Path './dapr' 'components/' -Resolve
@@ -110,108 +138,26 @@ $daprScriptsPath = Join-Path '.' '.dapr-run'
 # }
 
 
-$jobNamePattern = $projects | Join-String -Property appId -Separator "|" -OutputPrefix "(placement|" -OutputSuffix ")"
+# $jobNamePattern = $projects | Join-String -Property appId -Separator "|" -OutputPrefix "(placement|" -OutputSuffix ")"
 
-# --------------------------------------------------------------------------------
-if ($dbg) {
-  "-" * 80
-  foreach ($proj in $projects) {  
-    $proj | ConvertTo-Json | Out-Host
-  }
-}
-
-# --------------------------------------------------------------------------------
-# if ($updatelaunchSettings) {
+# # --------------------------------------------------------------------------------
+# if ($dbg) {
 #   "-" * 80
-#   Write-Host 'Updating Launch Settings'
-#   resetError
-
-#   foreach ($proj in $projects) {
-#     $launchSettingsFile = $proj.launchSettingsFile
-
-#     if ($dbg) {
-#       Write-Host "  $($proj.name) | $launchSettingsFile"  
-#     }
-
-#     $launchSettings = Get-Content $launchSettingsFile | ConvertFrom-Json
-
-#     foreach ($profile in $launchSettings.profiles.PSObject.Properties) {
-#       if ($profile.Name -eq $proj.settingName) {
-#         Update-EnvironmentVariable $profile.Value.environmentVariables "ASPNETCORE_URLS" $proj.urls
-#         Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_HTTP_PORT" $proj.daprHttpPort
-#         Update-EnvironmentVariable $profile.Value.environmentVariables "DAPR_GRPC_PORT" $proj.daprGrpcPort
-#       }
-#     }
-
-#     $launchSettings | ConvertTo-Json -Depth 10 | Set-Content $launchSettingsFile
-#     if ($dbg) {
-#       Write-Host "  Updated" $launchSettingsFile
-#     }
+#   foreach ($proj in $projects) {  
+#     $proj | ConvertTo-Json | Out-Host
 #   }
-#   checkError
 # }
 
 # --------------------------------------------------------------------------------
+if ($updatelaunchSettings) {
+  UpdateLaunchSettings -dbg $mydebug -projects $projects -ingress $false
+  checkError
+}
+
+# --------------------------------------------------------------------------------
 if ($writeDaprScripts) {
-# '  "-" * 80
-#   Write-Host 'Writing dapr files'
-#   if ($dbg) {
-#     Write-Host "  daprScriptsDir: $($daprScriptsPath)"  
-#   }
-#   if (! (Test-Path -Path $daprScriptsPath)) {
-#     New-Item -Path $daprScriptsPath -ItemType Directory
-#   }
- 
-#   $sumOuts = @()
-#   $sumOuts2 = @()
-
-#   "-" * 80
-
-#   $sumOuts += "dotnet build $($solutionFilePath)"
-#   $sumOuts2 += "dotnet build $($solutionFilePath)"
-
-#   foreach ($proj in $projects) {  
-#     if ($dbg) {
-#       Write-Host "  $($proj.name)"  
-#     }
-  
-#     foreach ($j in $proj.jobs) {
-      
-#       $cmd = $j.cmd
-#       $jobName = $j.jobName
-
-#       if ($dbg) {
-#         Write-Host "   $jobName"  
-#       }
-        
-#       $fileName = $jobName + '.cmd'
-#       if ($dbg) {
-#         Write-Host "    fileName: $fileName"  
-#       }
-
-#       $filePath = Join-Path -Path $daprScriptsPath -ChildPath $fileName
-#       if ($dbg) {
-#         Write-Host "    Scriptpath: $($filePath)"  
-#       }
-   
-#       $fileOuts = @()
-#       $fileOuts += 'title ' + $jobName
-#       $fileOuts += 'start ' + $cmd
-#       # $fileOuts += $cmd
-#       $fileOuts | Set-Content $filePath
-
-#       $sumOuts += 'start ' + $fileName
-#     }
-#   }
-  
-#   $sumOuts | Set-Content (Join-Path $daprScriptsPath 'run-all.cmd')
-
-#   @(
-#     'title dapr dashboard',
-#     'dapr dashboard'
-#   ) | Set-Content (Join-Path $daprScriptsPath 'dashboard.cmd')
-
-# '
+  $daprScriptsPath = Join-Path '.' '.dapr-run'
+  WriteDaprScripts -projects $projects -dir $daprScriptsPath -dbg $mydebug -daprPlacementPort $daprPlacementPort -componentsPath $componentsPath -configFilePath $configFilePath
 }
 
 
@@ -225,60 +171,60 @@ if ($startJobs -or $stopJobs) {
 
 # --------------------------------------------------------------------------------
 if ($startJobs) {
-  "-" * 80
-  Write-Host 'Starting Jobs'
+  # "-" * 80
+  # Write-Host 'Starting Jobs'
 
 
-  foreach ($proj in $projects) {  
-    if ($dbg) {
-      Write-Host "  Project: $($proj.name)"  
-    }
+  # foreach ($proj in $projects) {  
+  #   if ($dbg) {
+  #     Write-Host "  Project: $($proj.name)"  
+  #   }
   
-    foreach ($j in $proj.jobs) {
-      $cmd = $j.cmd
-      $jobName = $j.jobName
-      $jobTyp = $j.typ
+  #   foreach ($j in $proj.jobs) {
+  #     $cmd = $j.cmd
+  #     $jobName = $j.jobName
+  #     $jobTyp = $j.typ
 
-      # if ($dbg) {
-      #   Write-Host "   $jobName"  
-      # }
+  #     # if ($dbg) {
+  #     #   Write-Host "   $jobName"  
+  #     # }
 
-      Write-Host "    Start Job: $jobTyp $jobName"
+  #     Write-Host "    Start Job: $jobTyp $jobName"
 
-      if ($jobTyp -eq "dapr") {
-        Start-Job -Name $jobName -ScriptBlock {
+  #     if ($jobTyp -eq "dapr") {
+  #       Start-Job -Name $jobName -ScriptBlock {
 
-          param( $appId, $appPort, $daprHttpPort, $daprGrpcPort, $daprPlacementPort, $metricsPort, $componentsPath, $configFile)
+  #         param( $appId, $appPort, $daprHttpPort, $daprGrpcPort, $daprPlacementPort, $metricsPort, $componentsPath, $configFile)
     
-          dapr run --app-id $appId  `
-            --app-port $appPort `
-            --placement-host-address "localhost:$daprPlacementPort" `
-            --log-level debug `
-            --components-path $componentsPath `
-            --dapr-http-port $daprHttpPort `
-            --dapr-grpc-port $daprGrpcPort `
-            --metrics-port $metricsPort `
-            --config $configFile
+  #         dapr run --app-id $appId  `
+  #           --app-port $appPort `
+  #           --placement-host-address "localhost:$daprPlacementPort" `
+  #           --log-level debug `
+  #           --components-path $componentsPath `
+  #           --dapr-http-port $daprHttpPort `
+  #           --dapr-grpc-port $daprGrpcPort `
+  #           --metrics-port $metricsPort `
+  #           --config $configFile
     
-        } -Argument $proj.appId, $proj.appPort, $proj.daprHttpPort, $proj.daprGrpcPort, $daprPlacementPort, $proj.metricsPort, $componentsPath, $configFile
+  #       } -Argument $proj.appId, $proj.appPort, $proj.daprHttpPort, $proj.daprGrpcPort, $daprPlacementPort, $proj.metricsPort, $componentsPath, $configFile
     
   
-      }
+  #     }
 
-      if ($jobTyp -eq "dotnet-run") {
-        Start-Job -Name $jobName -ScriptBlock {
-          param($projectFile, $launchProfile)
+  #     if ($jobTyp -eq "dotnet-run") {
+  #       Start-Job -Name $jobName -ScriptBlock {
+  #         param($projectFile, $launchProfile)
   
-          # dotnet run --project $projectFile --urls $env:ASPNETCORE_URLS --launch-profile $launchProfile # --property DAPR_DEV=true
-          # dotnet run --project $projectFile --launch-profile $launchProfile --property:DAPR_DEV=true --property:DAPR_DEV_INST=X$id
-          dotnet run --project $projectFile --launch-profile $launchProfile --no-build
+  #         # dotnet run --project $projectFile --urls $env:ASPNETCORE_URLS --launch-profile $launchProfile # --property DAPR_DEV=true
+  #         # dotnet run --project $projectFile --launch-profile $launchProfile --property:DAPR_DEV=true --property:DAPR_DEV_INST=X$id
+  #         dotnet run --project $projectFile --launch-profile $launchProfile --no-build
   
-        } -Argument $proj.projectFile, $proj.settingName
-      }
+  #       } -Argument $proj.projectFile, $proj.settingName
+  #     }
     
-    }
+  #   }
 
-  }
+  # }
 }
 # --------------------------------------------------------------------------------
 if ($showJobs) {
@@ -313,13 +259,7 @@ if ($showJobs) {
 
 # --------------------------------------------------------------------------------
 if ($clean) {
-  # "-" * 80
-  # Write-Host 'Starting clean'
-  # Get-ChildItem -Recurse -Include 'bin', 'bin2', 'obj', 'TestResults' -Path .\ |
-  # ForEach-Object {
-  #   Remove-Item $_.FullName -recurse -force
-  #   Write-Host deleted $_.FullName
-  # }
+  CleanUp
 }
 
 # --------------------------------------------------------------------------------

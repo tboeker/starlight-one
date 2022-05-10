@@ -1,12 +1,7 @@
-﻿# [Cmdletbinding()]
-# Param(
-#   [switch] $dbg  
-# )
-
-function ReadProjects() {
+﻿function ReadProjects() {
   [Cmdletbinding()]
   Param(
-    [switch] $dbg  
+    [bool] $dbg = $false
   ) 
 
   Write-Host ("-" * 80)
@@ -44,7 +39,8 @@ function ReadProjects() {
       settingName        = $projDir.Name
       launchSettingsFile = $file.FullName
       name               = $projectName
-      urls               = "http://localhost:" + $appPort # + ";https://localhost:" + $($appPort + 1)
+      urls               = "http://localhost:" + $appPort # + ";http://127.0.0.1:" + $appPort # + ";https://localhost:" + $($appPort + 1)
+      # urls               = "http://+:" + $appPort
       appPort            = $appPort.ToString()
       daprHttpPort       = $daprHttpPort.ToString()
       daprGrpcPort       = $daprGrpcPort.ToString()
@@ -69,29 +65,29 @@ function ReadProjects() {
     $appPort += 10
     $metricsPort += 1
 
-    $jobName = $proj.appId + "-dapr"
-    $cmd = "dapr run --app-id $($proj.appId) --app-port $($proj.appPort) --placement-host-address localhost:$daprPlacementPort --log-level debug --components-path $componentsPath --dapr-http-port $($proj.daprHttpPort) --dapr-grpc-port $($proj.daprGrpcPort) --metrics-port $metricsPort --config $configFilePath"
-    if ($dbg) { Write-Host "    Job: $($jobName) Cmd: $($cmd)" }
+    # $jobName = $proj.appId + "-dapr"
+    # $cmd = "dapr run --app-id $($proj.appId) --app-port $($proj.appPort) --placement-host-address localhost:$daprPlacementPort --log-level debug --components-path $componentsPath --dapr-http-port $($proj.daprHttpPort) --dapr-grpc-port $($proj.daprGrpcPort) --metrics-port $metricsPort --config $configFilePath"
+    # if ($dbg) { Write-Host "    Job: $($jobName) Cmd: $($cmd)" }
 
-    $proj.jobs += @{
-      cmd     = $cmd
-      jobName = $jobName
-      typ     = "dapr"
-    }
+    # $proj.jobs += @{
+    #   cmd     = $cmd
+    #   jobName = $jobName
+    #   typ     = "dapr"
+    # }
 
-    if ($skipAppId -eq $proj.appId) {
-      Write-Host "expecting" $($proj.projectFile) "to be started from development environment"
-    }
-    else {
-      $jobName = $proj.appId + "-app"
-      $cmd = "dotnet run --project $($proj.projectFile) --launch-profile $($proj.settingName) --no-build"
-      if ($dbg) { Write-Host "    Job: $($jobName) Cmd: $($cmd)" }
-      $proj.jobs += @{
-        cmd     = $cmd
-        jobName = $jobName
-        typ     = "dotnet-run"
-      }  
-    }
+    # if ($skipAppId -eq $proj.appId) {
+    #   Write-Host "expecting" $($proj.projectFile) "to be started from development environment"
+    # }
+    # else {
+    #   $jobName = $proj.appId + "-app"
+    #   $cmd = "dotnet run --project $($proj.projectFile) --launch-profile $($proj.settingName) --no-build"
+    #   if ($dbg) { Write-Host "    Job: $($jobName) Cmd: $($cmd)" }
+    #   $proj.jobs += @{
+    #     cmd     = $cmd
+    #     jobName = $jobName
+    #     typ     = "dotnet-run"
+    #   }  
+    # }
 
     $projects += $proj
   }

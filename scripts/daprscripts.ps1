@@ -2,8 +2,12 @@ function WriteDaprScripts() {
   [Cmdletbinding()]
   Param(
     [array] $projects,
-    [switch] $dbg,
-    [string] $dir
+    [bool] $dbg = $false,
+    [string] $dir,
+    [string] $daprPlacementPort,
+    [string] $componentsPath,
+    # [string] $metricsPort,
+    [string] $configFilePath
   )     
 
   Write-Host ("-" * 80)
@@ -24,22 +28,36 @@ function WriteDaprScripts() {
 
   Write-Host ("-" * 80)
 
-  $sumOuts += "dotnet build $($solutionFilePath)"
-  $sumOuts2 += "dotnet build $($solutionFilePath)"
+  # $sumOuts += "dotnet build $($solutionFilePath)"
+  # $sumOuts2 += "dotnet build $($solutionFilePath)"
 
   foreach ($proj in $projects) {  
     if ($dbg) {
       Write-Host "  $($proj.name)"  
     }
   
-    foreach ($j in $proj.jobs) {
+    # foreach ($j in $proj.jobs) {
       
-      $cmd = $j.cmd
-      $jobName = $j.jobName
+      $jobName = $proj.appId + "-dapr"
+      $cmd = "dapr run --app-id $($proj.appId) --app-port $($proj.appPort) --placement-host-address localhost:$daprPlacementPort --log-level debug --components-path $componentsPath --dapr-http-port $($proj.daprHttpPort) --dapr-grpc-port $($proj.daprGrpcPort) --metrics-port $($proj.metricsPort) --config $configFilePath"
+     
+      $cmd2 = "dapr run --app-id $($proj.appId) --app-port $($proj.appPort) --placement-host-address localhost:$daprPlacementPort --log-level debug --components-path ./dapr/components --dapr-http-port $($proj.daprHttpPort) --dapr-grpc-port $($proj.daprGrpcPort) --metrics-port $($proj.metricsPort) --config ./dapr/config.yaml & \"
+   
+      if ($dbg) { Write-Host "    Job: $($jobName) Cmd: $($cmd)" }
+      $sumOuts2 += $cmd2
+    #   $proj.jobs += @{
+    #   cmd     = $cmd
+    #   jobName = $jobName
+    #   typ     = "dapr"
+    # }
 
-      if ($dbg) {
-        Write-Host "   $jobName"  
-      }
+
+      # $cmd = $j.cmd
+      # $jobName = $j.jobName
+
+      # if ($dbg) {
+      #   Write-Host "   $jobName"  
+      # }
         
       $fileName = $jobName + '.cmd'
       if ($dbg) {
@@ -53,15 +71,16 @@ function WriteDaprScripts() {
    
       $fileOuts = @()
       $fileOuts += 'title ' + $jobName
-      $fileOuts += 'start ' + $cmd
-      # $fileOuts += $cmd
+      # $fileOuts += 'start ' + $cmd
+      $fileOuts += $cmd
       $fileOuts | Set-Content $filePath
 
       $sumOuts += 'start ' + $fileName
     }
-  }
+  # }
   
   $sumOuts | Set-Content (Join-Path $dir 'run-all.cmd')
+  $sumOuts2 | Set-Content (Join-Path $dir 'run2.txt')
 
   @(
     'title dapr dashboard',

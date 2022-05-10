@@ -78,7 +78,7 @@ public class InfoPageBuilder
 
             foreach (var link in options.Links)
             {
-                if (link.UseIngressPath)
+                if (link.UseIngressPath && ingress.Enabled)
                     AddLink(links, link.Name, link.Url, ingress.PathBase);
                 else
                     AddLink(links, link.Name, link.Url, string.Empty);

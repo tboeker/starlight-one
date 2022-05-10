@@ -3,7 +3,7 @@
     "Starships.Query.Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
@@ -11,7 +11,7 @@
         "DAPR_HTTP_PORT": "3540",
         "DAPR_GRPC_PORT": "50041",
         "Ingress__PathBase": "/api/starships/query",
-        "Ingress__Enabled": "true"
+        "Ingress__Enabled": "false"
       }
     }
   }

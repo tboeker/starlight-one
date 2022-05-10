@@ -17,7 +17,7 @@ Write-Host 'Importing Module'
 Import-Module $path
 if (-not $continueOnError) { if ($LASTEXITCODE -ne 0) { throw 'error' } } 
 
-[array] $p = ReadProjects 
+# [array] $p = ReadProjects 
 # $p | ForEach-Object { 
 #   Write-Host $_.appId
 #   # $_ | ConvertTo-Json | Out-Host
@@ -27,14 +27,14 @@ if (-not $continueOnError) { if ($LASTEXITCODE -ne 0) { throw 'error' } }
 
 # WriteDaprScripts -projects $p -dir $daprScriptsPath 
 
-$daprPlacementPort = 50006
+# $daprPlacementPort = 50006
 
-$configFilePath = Join-Path './dapr' 'config.yaml' -Resolve
-$componentsPath = Join-Path './dapr' 'components/' -Resolve
-$daprScriptsPath = Join-Path '.' '.dapr-run'
+# $configFilePath = Join-Path './dapr' 'config.yaml' -Resolve
+# $componentsPath = Join-Path './dapr' 'components/' -Resolve
+# $daprScriptsPath = Join-Path '.' '.dapr-run'
 
 
-StopJobs
-ShowJobs
-StartDaprJobs -projects $p -placementPort $daprPlacementPort -configFile $configFilePath
-ShowJobs
+# StopJobs
+# ShowJobs
+# StartDaprJobs -projects $p -placementPort $daprPlacementPort -configFile $configFilePath
+# ShowJobs

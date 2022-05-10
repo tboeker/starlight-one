@@ -12,7 +12,7 @@ public class IngressOptions
 
     public string GetPath(string path)
     {
-        if (string.IsNullOrEmpty(PathBase))
+        if (!Enabled || string.IsNullOrEmpty(PathBase))
             return path;
 
         path = path.EnsureNotStartsWith('/');

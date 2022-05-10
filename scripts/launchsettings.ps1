@@ -13,8 +13,8 @@ function UpdateLaunchSettings() {
   [Cmdletbinding()]
   Param(
     [array] $projects,
-    [switch] $dbg,
-    [switch] $ingress
+    [bool] $dbg = $false,
+    [bool] $ingress = $false
   )     
 
   Write-Host ("-" * 80)

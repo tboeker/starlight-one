@@ -50,12 +50,12 @@ public class MyAppBuilder
         return new MyApp(app, Log);
     }
 
-    public MyApp BuildApplication(Action<MyAppBuilder, MyApp> action)
-    {
-        var app = BuildApplication();
-        action(this, app);
-        return app;
-    }
+    // public MyApp BuildApplication(Action<MyAppBuilder, MyApp> action)
+    // {
+    //     var app = BuildApplication();
+    //     action(this, app);
+    //     return app;
+    // }
 
     public void Log(string text)
     {

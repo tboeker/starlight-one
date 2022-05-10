@@ -58,6 +58,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{82A17B71-F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarlightOne.SourceGenerators.Tests", "src\SourceGenerators\test\StarlightOne.SourceGenerators.Tests\StarlightOne.SourceGenerators.Tests.csproj", "{8DA17B31-AC28-461A-89E9-7A03F6C26FCC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosts", "Hosts", "{130462BE-3672-4B55-ACCF-67B51A68BDD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +139,7 @@ Global
 		{5BB8D998-B2FB-4888-A870-5B7E99B09D59} = {3FB1C2A5-29DD-4156-9682-F766813E6DF2}
 		{82A17B71-F903-4CF5-BF03-B4A60D788755} = {11007C10-6C93-4B47-BFD0-E62E5C70AEFD}
 		{8DA17B31-AC28-461A-89E9-7A03F6C26FCC} = {82A17B71-F903-4CF5-BF03-B4A60D788755}
+		{130462BE-3672-4B55-ACCF-67B51A68BDD6} = {218F10ED-5B5E-4E03-B37E-D1DB4A6915E9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BFA6F84-2039-4A6B-8ADF-CADFB3291AC4}
